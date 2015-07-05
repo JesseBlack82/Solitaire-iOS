@@ -8,9 +8,13 @@
 @interface STKGameEngine : NSObject
 
 
++ (NSUInteger)defaultDrawCount;
+
 - (instancetype)initWithBoard:(STKBoard *)board;
+- (instancetype)initWithBoard:(STKBoard *)board drawCount:(NSUInteger)count;
 
 - (NSArray *)stock;
+
 - (NSArray *)waste;
 - (NSArray *)tableauAtIndex:(NSUInteger)tableauIndex;
 - (NSArray *)stockTableauAtIndex:(NSUInteger)tableauIndex;
@@ -27,4 +31,6 @@
 - (NSArray *)tableaus;
 
 - (STKMove *)grabPileFromCard:(STKCard *)card;
+
+- (NSUInteger)drawCount;
 @end

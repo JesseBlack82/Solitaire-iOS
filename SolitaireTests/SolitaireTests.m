@@ -22,7 +22,8 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
     [self setBoard:[[STKBoard alloc] init]];
-    [self setEngine:[[STKGameEngine alloc] initWithBoard:[self board]]];
+    [self setEngine:[[STKGameEngine alloc] initWithBoard:[self board]
+                                               drawCount:[STKGameEngine defaultDrawCount]]];
     [[self engine] dealCards:[STKCard deck]];
 }
 
@@ -257,6 +258,59 @@
             XCTAssertFalse([tableau containsObject:tableau]);
             XCTAssertTrue([move sourcePileID] == sourcePileID);
         }
+    }
+}
+
+- (void)testDrawingStockToWaste {
+    NSUInteger expectedLength = [[self engine] drawCount];
+    NSArray *expectedWaste = [[[self engine] stock] subarrayWithRange:NSMakeRange([[[self engine] stock] count] - expectedLength, expectedLength)];
+    NSEnumerator *expectedWasteEnumerator = [expectedWaste reverseObjectEnumerator];
+
+    [[self engine] drawStockToWaste];
+
+    NSUInteger wasteIndex = [[[self engine] waste] count] - expectedLength;
+    for (STKCard *card in expectedWasteEnumerator) {
+
+        XCTAssertEqual(card, [[[self engine] waste] objectAtIndex:wasteIndex++]);
+        XCTAssertFalse([[[self engine] stock] containsObject:card]);
+    }
+}
+
+- (void)testDrawingLessThanDrawCountFromStockToWaste {
+    //default draw count = 3
+    NSUInteger initialStockCount = [[[self engine] stock] count];
+    NSUInteger expectedLength = [[self engine] drawCount] - 1;
+    NSUInteger amountToMove = initialStockCount - expectedLength;
+
+    for (NSUInteger i = 0; i < amountToMove; ++i) {
+        [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
+    }
+
+    NSArray *expectedWaste = [[[self engine] stock] subarrayWithRange:NSMakeRange([[[self engine] stock] count] - expectedLength, expectedLength)];
+    NSEnumerator *expectedWasteEnumerator = [expectedWaste reverseObjectEnumerator];
+
+    [[self engine] drawStockToWaste];
+
+    NSUInteger wasteIndex = [[[self engine] waste] count] - expectedLength;
+    for (STKCard *card in expectedWasteEnumerator) {
+        XCTAssertEqual(card, [[[self engine] waste] objectAtIndex:wasteIndex++]);
+        XCTAssertFalse([[[self engine] stock] containsObject:card]);
+    }
+}
+
+- (void)testRedealWasteToStock {
+    while ([[[self engine] stock] count]) {
+        [[self engine] drawStockToWaste];
+    }
+
+    NSEnumerator *expectedStock = [[[self engine] waste] reverseObjectEnumerator];
+
+    [[self engine] resetWasteToStock];
+
+    NSUInteger stockIndex = 0;
+    for (STKCard *card in expectedStock) {
+        XCTAssertEqual(card, [[[self engine] stock] objectAtIndex:stockIndex++]);
+        XCTAssertFalse([[[self engine] waste] containsObject:card]);
     }
 }
 
