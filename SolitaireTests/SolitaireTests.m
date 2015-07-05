@@ -61,4 +61,38 @@
     }
 }
 
+- (void)testCanDrawStockToWasteWhenStockIsNonEmpty {
+    XCTAssertTrue([[self engine] canDrawStockToWaste]);
+}
+
+- (void)testCanNotDrawStockToWasteWhenStockIsEmpty {
+    while ([[[self engine] stock] count] > 0) {
+        [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
+    }
+
+    XCTAssertFalse([[self engine] canDrawStockToWaste]);
+}
+
+- (void)testCanRedealWasteToStockWhenStockIsEmptyAndWasteIsNonEmpty {
+    while ([[[self engine] stock] count] > 0) {
+        [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
+    }
+
+    XCTAssertTrue([[self engine] canResetWasteToStock]);
+}
+
+- (void)testCanNotRedealWasteToStockWhenStockIsNonEmpty {
+    // stock is already none empty, make sure to populate waste to make the next test more valuable
+    [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
+
+    XCTAssertFalse([[self engine] canResetWasteToStock]);
+}
+
+- (void)testCanNotRedealWasteToStockWhenWasteIsEmpty {
+    [[[self board] stock] removeAllObjects];
+    [[[self board] waste] removeAllObjects];
+
+    XCTAssertFalse([[self engine] canResetWasteToStock]);
+}
+
 @end
