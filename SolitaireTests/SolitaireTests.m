@@ -356,4 +356,52 @@
     XCTAssertTrue([[self engine] areWinningConditionsSatisfied]);
 }
 
+- (void)testCanMoveValidCardsToNonEmptyTableau {
+    NSMutableArray *tableau = [[[self board] tableaus] firstObject];
+    [tableau removeAllObjects];
+    [tableau addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
+
+    STKPileID tableauID = [[self board] pileIDForPile:tableau];
+
+    NSArray *validCards = @[
+            [STKCard cardWithRank:STKCardRankFour suit:STKCardSuitHearts],
+            [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitClubs]
+    ];
+
+    STKMove *validMove = [[STKMove alloc] initWithCards:validCards sourcePileID:kNilOptions];
+
+    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:tableauID]);
+}
+
+- (void)testCanNotMoveInvalidCardsToNonEmptyTableau {
+    NSMutableArray *tableau = [[[self board] tableaus] firstObject];
+    [tableau addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
+
+    STKPileID tableauID = [[self board] pileIDForPile:tableau];
+
+    NSArray *invalidCards = @[
+            [STKCard cardWithRank:STKCardRankFive suit:STKCardSuitHearts],
+            [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitClubs]
+    ];
+
+    STKMove *invalidMove = [[STKMove alloc] initWithCards:invalidCards sourcePileID:-1];
+    XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPileID:tableauID]);
+}
+
+- (void)testCanMoveKingWhenTableauAndStockTableauAreEmpty {
+    NSMutableArray *stockTableau = [[[self board] stockTableaus] firstObject];
+    NSMutableArray *tableau = [[[self board] tableaus] firstObject];
+    [stockTableau removeAllObjects];
+    [tableau removeAllObjects];
+
+    STKPileID tableauID = [[self board] pileIDForPile:tableau];
+
+    NSArray *cards = @[
+            [STKCard cardWithRank:STKCardRankKing suit:STKCardSuitClubs]
+    ];
+
+    STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
+    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:tableauID]);
+}
+
 @end
