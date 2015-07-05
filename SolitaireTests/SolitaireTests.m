@@ -3,6 +3,7 @@
 #import "STKBoard.h"
 #import "STKGameEngine.h"
 #import "STKCard.h"
+#import "STKMove.h"
 
 @interface SolitaireTests : XCTestCase
 
@@ -177,6 +178,84 @@
                 return;
             }
             XCTAssertTrue([[self engine] canGrab:[tableau lastObject]]);
+        }
+    }
+}
+
+- (void)testGrabbingTopWasteCard {
+    [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
+
+    STKCard *topWasteCard = [[[self engine] waste] lastObject];
+    STKMove *move = [[self engine] grabPileFromCard:topWasteCard];
+
+    XCTAssertEqual([[move cards] firstObject], topWasteCard);
+    XCTAssertEqual([[move cards] count], 1);
+    XCTAssertFalse([[[self engine] waste] containsObject:topWasteCard]);
+
+    STKSourcePileID sourcePileID = [[self board] sourcePileIDForCard:topWasteCard];
+    XCTAssertTrue([move sourcePileID] == sourcePileID);
+}
+
+- (void)testGrabbingTopFoundationCard
+{
+    for (NSMutableArray *foundation in [[self board] foundations]) {
+        [STKBoard moveTopCard:[[self board] stock] toPile:foundation];
+    }
+
+    for (NSUInteger i = 0; i < [[[self engine] foundations] count]; ++i) {
+        NSArray *foundation = [[self engine] foundationAtIndex:i];
+        STKCard *topFoundationCard = [foundation lastObject];
+        STKMove *move = [[self engine] grabPileFromCard:topFoundationCard];
+
+        XCTAssertEqual([[move cards] firstObject], topFoundationCard);
+        XCTAssertEqual([[move cards] count], 1);
+        XCTAssertFalse([[[self engine] foundationAtIndex:i] containsObject:topFoundationCard]);
+
+        STKSourcePileID sourcePileID = [[self board] sourcePileIDForCard:topFoundationCard];
+        XCTAssertTrue([move sourcePileID] == sourcePileID);
+    }
+}
+
+- (void)testGrabbingTopTableauCard {
+    for (NSMutableArray *tableau in [[self board] tableaus]) {
+        [STKBoard moveTopCard:[[self board] stock] toPile:tableau];
+    }
+
+    for (NSUInteger i = 0; i < [[[self engine] tableaus] count]; ++i) {
+        NSArray *tableau = [[self engine] tableauAtIndex:i];
+        STKCard *topTableauCard = [tableau lastObject];
+        STKMove *move = [[self engine] grabPileFromCard:topTableauCard];
+
+        XCTAssertEqual([[move cards] firstObject], topTableauCard);
+        XCTAssertEqual([[move cards] count], 1);
+        XCTAssertFalse([[[self engine] tableauAtIndex:i] containsObject:topTableauCard]);
+
+        STKSourcePileID sourcePileID = [[self board] sourcePileIDForCard:topTableauCard];
+        XCTAssertTrue([move sourcePileID] == sourcePileID);
+    }
+}
+
+- (void)testGrabbingTopTableauCards {
+    for (NSMutableArray *tableau in [[self board] tableaus]) {
+        [STKBoard moveTopCard:[[self board] stock] toPile:tableau];
+    }
+
+    for (NSArray *tableau in [[self engine] tableaus]) {
+        NSUInteger expectedGrabbedCardsCount = [tableau count] - 1;
+        NSUInteger tableauIndex = [[[self engine] tableaus] indexOfObject:tableau];
+        STKSourcePileID sourcePileID = [[self board] sourcePileIDForPile:[[self board] tableauAtIndex:tableauIndex]];
+
+        for (STKCard *card in tableau) {
+            if (card == [tableau lastObject]) {
+                break;
+            }
+
+            STKMove *move = [[self engine] grabPileFromCard:card];
+
+            XCTAssertEqual([[move cards] firstObject], card);
+            XCTAssertEqual([[move cards] count], expectedGrabbedCardsCount--);
+            XCTAssertFalse([tableau containsObject:tableau]);
+            XCTAssertTrue([move sourcePileID] == sourcePileID);
         }
     }
 }
