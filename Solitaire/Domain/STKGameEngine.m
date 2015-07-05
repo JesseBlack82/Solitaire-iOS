@@ -1,4 +1,5 @@
 #import "STKGameEngine.h"
+#import "STKCard.h"
 
 @interface STKGameEngine ()
 @property(nonatomic, strong) STKBoard *board;
@@ -52,6 +53,22 @@
     return [[self stock] count] == 0 && [[self waste] count] > 0;
 }
 
+- (BOOL)canGrab:(STKCard *)card
+{
+    if ([[self board] isCardTopWasteCard:card]) {
+        return YES;
+    }
+
+    if ([[self board] isTableauCard:card]) {
+        return YES;
+    }
+
+    if ([[self board] isTopFoundationCard:card]) {
+        return YES;
+    }
+    return NO;
+}
+
 - (void)dealCards:(NSArray *)cards
 {
     NSMutableArray *deck = [cards mutableCopy];
@@ -89,4 +106,21 @@
     [[[self board] stock] addObjectsFromArray:deck];
 }
 
+- (NSArray *)foundations
+{
+    NSMutableArray *foundations = [NSMutableArray array];
+    for (NSMutableArray *foundation in [[self board] foundations]) {
+        [foundations addObject:[foundation copy]];
+    }
+    return [foundations copy];
+}
+
+- (NSArray *)tableaus
+{
+    NSMutableArray *tableaus = [NSMutableArray array];
+    for (NSMutableArray *tableaus in [[self board] tableaus]) {
+        [tableaus addObject:[tableaus copy]];
+    }
+    return [tableaus copy];
+}
 @end

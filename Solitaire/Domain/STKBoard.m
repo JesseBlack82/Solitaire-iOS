@@ -1,5 +1,6 @@
 
 #import "STKBoard.h"
+#import "STKCard.h"
 
 @interface STKBoard ()
 @end
@@ -66,6 +67,34 @@
 - (NSMutableArray *)stockTableauAtIndex:(NSUInteger)tableauIndex
 {
     return [self stockTableaus][tableauIndex];
+}
+
+- (BOOL)isCardTopWasteCard:(STKCard *)card
+{
+    return [[self waste] count] > 0 && [[self waste] lastObject] == card;
+}
+
+- (BOOL)isTableauCard:(STKCard *)card
+{
+    for (NSArray *tableau in [self tableaus]) {
+        for (STKCard *tableauCard in tableau) {
+            if (tableauCard == card) {
+                return YES;
+            }
+        }
+    }
+
+    return NO;
+}
+
+- (BOOL)isTopFoundationCard:(STKCard *)card
+{
+    for (NSArray *foundation in [self foundations]) {
+        if ([foundation lastObject] == card) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 @end

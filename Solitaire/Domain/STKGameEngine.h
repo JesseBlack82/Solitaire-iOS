@@ -2,6 +2,8 @@
 #import <Foundation/Foundation.h>
 #import "STKBoard.h""
 
+@class STKCard;
+
 @interface STKGameEngine : NSObject
 
 
@@ -15,8 +17,11 @@
 
 - (BOOL)canDrawStockToWaste;
 - (BOOL)canResetWasteToStock;
+- (BOOL)canGrab:(STKCard *)card;
 
 - (void)dealCards:(NSArray *)deck;
 
+- (NSArray *)foundations;
 
+- (NSArray *)tableaus;
 @end

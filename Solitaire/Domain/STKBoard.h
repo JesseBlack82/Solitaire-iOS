@@ -1,6 +1,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class STKCard;
+
 @interface STKBoard : NSObject
 
 @property (nonatomic, strong) NSMutableArray* stock;
@@ -20,4 +22,9 @@
 - (NSMutableArray *)tableauAtIndex:(NSUInteger)tableauIndex;
 - (NSMutableArray *)stockTableauAtIndex:(NSUInteger)tableauIndex;
 
+- (BOOL)isCardTopWasteCard:(STKCard *)card;
+
+- (BOOL)isTableauCard:(STKCard *)card;
+
+- (BOOL)isTopFoundationCard:(STKCard *)card;
 @end
