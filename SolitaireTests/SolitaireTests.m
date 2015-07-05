@@ -193,8 +193,8 @@
     XCTAssertEqual([[move cards] count], 1);
     XCTAssertFalse([[[self engine] waste] containsObject:topWasteCard]);
 
-    STKSourcePileID sourcePileID = [[self board] sourcePileIDForCard:topWasteCard];
-    XCTAssertTrue([move sourcePileID] == sourcePileID);
+    STKPileID expectedPileID = [[self board] pileIDForCard:topWasteCard];
+    XCTAssertEqual(expectedPileID, [move sourcePileID]);
 }
 
 - (void)testGrabbingTopFoundationCard
@@ -212,8 +212,8 @@
         XCTAssertEqual([[move cards] count], 1);
         XCTAssertFalse([[[self engine] foundationAtIndex:i] containsObject:topFoundationCard]);
 
-        STKSourcePileID sourcePileID = [[self board] sourcePileIDForCard:topFoundationCard];
-        XCTAssertTrue([move sourcePileID] == sourcePileID);
+        STKPileID expectedPileID = [[self board] pileIDForCard:topFoundationCard];
+        XCTAssertEqual(expectedPileID, [move sourcePileID]);
     }
 }
 
@@ -231,8 +231,8 @@
         XCTAssertEqual([[move cards] count], 1);
         XCTAssertFalse([[[self engine] tableauAtIndex:i] containsObject:topTableauCard]);
 
-        STKSourcePileID sourcePileID = [[self board] sourcePileIDForCard:topTableauCard];
-        XCTAssertTrue([move sourcePileID] == sourcePileID);
+        STKPileID expectedPileID = [[self board] pileIDForCard:topTableauCard];
+        XCTAssertEqual(expectedPileID, [move sourcePileID]);
     }
 }
 
@@ -244,7 +244,7 @@
     for (NSArray *tableau in [[self engine] tableaus]) {
         NSUInteger expectedGrabbedCardsCount = [tableau count] - 1;
         NSUInteger tableauIndex = [[[self engine] tableaus] indexOfObject:tableau];
-        STKSourcePileID sourcePileID = [[self board] sourcePileIDForPile:[[self board] tableauAtIndex:tableauIndex]];
+        STKPileID expectedPileID = [[self board] pileIDForPile:[[self board] tableauAtIndex:tableauIndex]];
 
         for (STKCard *card in tableau) {
             if (card == [tableau lastObject]) {
@@ -256,7 +256,7 @@
             XCTAssertEqual([[move cards] firstObject], card);
             XCTAssertEqual([[move cards] count], expectedGrabbedCardsCount--);
             XCTAssertFalse([tableau containsObject:tableau]);
-            XCTAssertTrue([move sourcePileID] == sourcePileID);
+            XCTAssertEqual(expectedPileID, [move sourcePileID]);
         }
     }
 }
@@ -331,4 +331,29 @@
 - (void)testCanNotFlipStockTableauWhenTableauIsNotEmpty {
     XCTAssertFalse([[self engine] canFlipStockTableauAtIndex:1]);
 }
+
+- (void)testPatienceEngineCanValidateWinningConditions
+{
+    [self setBoard:[[STKBoard alloc] init]];
+    [self setEngine:[[STKGameEngine alloc] initWithBoard:[self board]]];
+
+    //set up winning board
+
+    for (NSUInteger i = 0; i < [[[self board] foundations] count]; ++i) {
+        NSMutableArray *foundation = [[self board] foundationAtIndex:i];
+        STKCardSuit suit = [[[STKCard allSuits] objectAtIndex:i] intValue];
+        [foundation addObjectsFromArray:[STKCard completeAscendingSuit:suit]];
+    }
+
+    for (NSUInteger i = 0; i < [STKBoard numberOfTableaus]; ++i) {
+        [[[self board] tableauAtIndex:i] removeAllObjects];
+        [[[self board] stockTableauAtIndex:i] removeAllObjects];
+    }
+
+    [[[self board] waste] removeAllObjects];
+    [[[self board] stock] removeAllObjects];
+
+    XCTAssertTrue([[self engine] areWinningConditionsSatisfied]);
+}
+
 @end
