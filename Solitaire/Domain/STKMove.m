@@ -3,16 +3,16 @@
 
 @interface STKMove ()
 @property(nonatomic, strong) NSArray *cards;
-@property(nonatomic) STKSourcePileID sourcePileID;
+@property(nonatomic) STKPileID sourcePileID;
 @end
 
 @implementation STKMove
-+ (STKMove *)moveWithCards:(NSArray *)cards sourcePileID:(STKSourcePileID)sourcePileID
++ (STKMove *)moveWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID
 {
     return [[STKMove alloc] initWithCards:cards sourcePileID:sourcePileID];
 }
 
-- (instancetype)initWithCards:(NSArray *)cards sourcePileID:(STKSourcePileID)sourcePileID
+- (instancetype)initWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID
 {
     self = [super init];
 
@@ -29,10 +29,9 @@
     return _cards;
 }
 
-- (STKSourcePileID)sourcePileID
+- (STKPileID)sourcePileID
 {
     return _sourcePileID;
 }
-
 
 @end

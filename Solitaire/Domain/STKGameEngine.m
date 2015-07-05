@@ -152,7 +152,7 @@
     }
 
     NSArray *cards = [[self board] grabPileFromCard:card];
-    STKMove *move = [STKMove moveWithCards:cards sourcePileID:[[self board] sourcePileIDForCard:card]];
+    STKMove *move = [STKMove moveWithCards:cards sourcePileID:[[self board] pileIDForCard:card]];
 
     return move;
 }
@@ -174,6 +174,26 @@
     while ([[self waste] count] > 0) {
         [STKBoard moveTopCard:[[self board] waste] toPile:[[self board] stock]];
     }
+}
+
+- (BOOL)areWinningConditionsSatisfied
+{
+    NSArray *foundations = [self foundations];
+    NSMutableArray *remainingSuits = [[STKCard allSuits] mutableCopy];
+    for (NSArray *foundation in foundations) {
+        STKCardSuit suit = [[foundation firstObject] suit];
+        NSMutableArray *remainingRanks = [[STKCard orderedRanks] mutableCopy];
+        for (STKCard *card in foundation) {
+            if (!([card rank] == [[remainingRanks firstObject] unsignedIntegerValue] || [card suit] == suit)) {
+                return NO;
+            }
+            [remainingRanks removeObject:0];
+        }
+        [remainingSuits removeObject:@(suit)];
+
+    }
+
+    return [remainingSuits count] == 0;
 }
 
 @end

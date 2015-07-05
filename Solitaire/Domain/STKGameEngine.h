@@ -12,6 +12,8 @@
 - (instancetype)initWithBoard:(STKBoard *)board;
 - (instancetype)initWithBoard:(STKBoard *)board drawCount:(NSUInteger)count;
 
+@property (nonatomic, readonly) NSUInteger drawCount;
+
 - (NSArray *)stock;
 - (NSArray *)waste;
 - (NSArray *)tableauAtIndex:(NSUInteger)tableauIndex;
@@ -20,9 +22,9 @@
 - (NSArray *)foundations;
 - (NSArray *)tableaus;
 
-- (NSUInteger)drawCount;
-
 - (void)dealCards:(NSArray *)deck;
+
+- (BOOL)areWinningConditionsSatisfied;
 
 - (BOOL)canDrawStockToWaste;
 - (BOOL)canResetWasteToStock;

@@ -108,10 +108,10 @@
     return cards;
 }
 
-- (STKSourcePileID)sourcePileIDForCard:(STKCard *)card
+- (STKPileID)pileIDForCard:(STKCard *)card
 {
     NSMutableArray *sourcePile = [self sourcePileForCard:card];
-    return [self sourcePileIDForPile:sourcePile];
+    return [self pileIDForPile:sourcePile];
 }
 
 - (NSMutableArray *)sourcePileForCard:(STKCard *)card
@@ -125,12 +125,7 @@
     return nil;
 }
 
-- (NSMutableArray *)sourcePile:(STKSourcePileID)pileID
-{
-    return [self allPiles][pileID];
-}
-
-- (STKSourcePileID)sourcePileIDForPile:(NSMutableArray *)pile
+- (STKPileID)pileIDForPile:(NSMutableArray *)pile
 {
     return [[self allPiles] indexOfObject:pile];
 }

@@ -3,7 +3,15 @@
 
 @class STKCard;
 
-typedef NSUInteger STKSourcePileID;
+typedef NSUInteger STKPileID;
+
+typedef enum {
+    STKPileTypeStock,
+    STKPileTypeWaste,
+    STKPileTypeTableau,
+    STKPileTypeStockTableau,
+    STKPileTypeFoundation
+} STKPileType;
 
 @interface STKBoard : NSObject
 
@@ -14,25 +22,22 @@ typedef NSUInteger STKSourcePileID;
 @property (nonatomic, strong) NSArray *tableaus;
 
 + (NSUInteger)numberOfTableaus;
-
 + (NSUInteger)numberOfFoundations;
-
-- (NSMutableArray *)foundationAtIndex:(NSUInteger)foundationIndex;
-
 + (void)moveTopCard:(NSMutableArray *)sourcePile toPile:(NSMutableArray *)toPile;
 
+- (STKPileType)pileTypeForPileID:(STKPileID)pileID;
+
+- (NSMutableArray *)foundationAtIndex:(NSUInteger)foundationIndex;
 - (NSMutableArray *)tableauAtIndex:(NSUInteger)tableauIndex;
 - (NSMutableArray *)stockTableauAtIndex:(NSUInteger)tableauIndex;
 
 - (BOOL)isCardTopWasteCard:(STKCard *)card;
-
 - (BOOL)isTableauCard:(STKCard *)card;
-
 - (BOOL)isTopFoundationCard:(STKCard *)card;
 
+- (STKPileID)pileIDForCard:(STKCard *)card;
+- (STKPileID)pileIDForPile:(NSMutableArray *)pile;
+- (NSMutableArray *)getPile:(STKPileID)pileID;
+
 - (NSArray *)grabPileFromCard:(STKCard *)card;
-
-- (STKSourcePileID)sourcePileIDForCard:(STKCard *)card;
-
-- (STKSourcePileID)sourcePileIDForPile:(NSMutableArray *)pile;
 @end

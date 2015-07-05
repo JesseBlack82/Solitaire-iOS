@@ -4,11 +4,11 @@
 
 
 @interface STKMove : NSObject
-+ (STKMove *)moveWithCards:(NSArray *)cards sourcePileID:(STKSourcePileID)sourcePile;
++ (STKMove *)moveWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID;
 
-- (instancetype)initWithCards:(NSArray *)cards sourcePileID:(STKSourcePileID)sourcePileID;
+- (instancetype)initWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID;
 
 - (NSArray *)cards;
-- (STKSourcePileID)sourcePileID;
+- (STKPileID)sourcePileID;
 
 @end
