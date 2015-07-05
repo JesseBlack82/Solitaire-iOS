@@ -59,5 +59,46 @@
     return [cards copy];
 }
 
++ (BOOL)areCardsDescendingRankWithAlternatingColors:(NSArray *)cards
+{
+    if ([cards count] == 0) {
+        return NO;
+    }
+
+    STKCard *previousCard;
+    for (STKCard *card in cards) {
+        if (previousCard) {
+            if (![previousCard isOppositeColor:card] || ![previousCard isCardNextDescendingRank:card]) {
+                return NO;
+            }
+        }
+
+        previousCard = card;
+    }
+
+    return YES;
+}
+
+- (BOOL)isOppositeColor:(STKCard *)card {
+    NSArray *redSuits = @[@(STKCardSuitHearts), @(STKCardSuitDiamonds)];
+    NSArray *blackSuits = @[@(STKCardSuitClubs), @(STKCardSuitSpades)];
+
+    if ([redSuits containsObject:@([card suit])]) {
+        return [blackSuits containsObject:@([self suit])];
+    }
+
+    if ([blackSuits containsObject:@([card suit])]) {
+        return [redSuits containsObject:@([self suit])];
+    }
+
+    return NO;
+}
+
+- (BOOL)isCardNextDescendingRank:(STKCard *)card {
+    NSUInteger rank = [[[self class] orderedRanks] indexOfObject:@([self rank])];
+    NSUInteger nextRank= [[[self class] orderedRanks] indexOfObject:@([card rank])];
+
+    return nextRank == --rank;
+}
 
 @end

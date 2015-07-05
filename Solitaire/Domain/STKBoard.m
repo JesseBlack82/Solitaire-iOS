@@ -54,6 +54,29 @@
     }
 }
 
+- (STKPileType)pileTypeForPileID:(STKPileID)pileID
+{
+    NSMutableArray *pile = [self getPile:pileID];
+
+    if ([[self tableaus] containsObject:pile]) {
+        return STKPileTypeTableau;
+    }
+    if ([[self stockTableaus] containsObject:pile]) {
+        return STKPileTypeStockTableau;
+    }
+    if ([self stock] == pile) {
+        return STKPileTypeStock;
+    }
+    if ([self waste] == pile) {
+        return STKPileTypeWaste;
+    }
+    if ([[self foundations] containsObject:pile]) {
+        return STKPileTypeFoundation;
+    }
+
+    return -1;
+}
+
 - (NSMutableArray *)foundationAtIndex:(NSUInteger)foundationIndex
 {
     return [self foundations][foundationIndex];
@@ -95,6 +118,11 @@
         }
     }
     return NO;
+}
+
+- (NSMutableArray *)getPile:(STKPileID)pileID
+{
+    return [[self allPiles] objectAtIndex:pileID];
 }
 
 - (NSArray *)grabPileFromCard:(STKCard *)card
@@ -147,4 +175,5 @@
 
     return piles;
 }
+
 @end

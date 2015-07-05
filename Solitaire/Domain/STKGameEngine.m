@@ -9,6 +9,11 @@
 
 @implementation STKGameEngine
 
++ (BOOL)isTableauValid:(NSArray *)tableau
+{
+    return [STKCard areCardsDescendingRankWithAlternatingColors:tableau];
+}
+
 + (NSUInteger)defaultDrawCount
 {
     return 3;
@@ -88,6 +93,47 @@
     NSArray *tableau = [self tableauAtIndex:index];
 
     return [stockTableau count] > 0 && [tableau count] == 0;
+}
+
+- (BOOL)canCompleteMove:(STKMove *)move withTargetPileID:(STKPileID)targetPileID
+{
+    return [self canMoveCards:[move cards] toPileID:(STKPileID)targetPileID];
+}
+
+- (BOOL)canMoveCards:(NSArray *)cards toPileID:(STKPileID)targetPileID
+{
+    switch ([[self board] pileTypeForPileID:targetPileID]) {
+        case STKPileTypeTableau:
+            return [self canMoveCards:cards toTableau:[[self board] getPile:targetPileID]];
+        default: break;
+    }
+
+    return NO;
+}
+
+- (BOOL)canMoveCards:(NSArray *)cards toTableau:(NSArray *)tableau
+{
+    if ([[cards firstObject] rank] == STKCardRankKing) {
+        return [[self associatedStockTableau:tableau] count] == 0 && [tableau count] == 0;
+    }
+
+    STKCard *toCard = [tableau lastObject];
+
+    if ([cards count] > 0 && toCard) {
+#warning mutable copy of mutablearray should be new array?!?
+        NSMutableArray *temporaryTableau = [tableau mutableCopy];
+        [temporaryTableau addObjectsFromArray:cards];
+
+        return [[self class] isTableauValid:temporaryTableau];
+    }
+
+    return NO;
+}
+
+- (NSMutableArray *)associatedStockTableau:(NSArray *)tableau
+{
+    NSUInteger index = [[[self board] tableaus] indexOfObject:tableau];
+    return [[self board] stockTableauAtIndex:index];
 }
 
 - (void)dealCards:(NSArray *)cards
