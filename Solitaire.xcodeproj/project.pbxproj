@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		605620DE979C5A2E5972DF7D /* STKBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 605620C1FEC80D022B0D2DED /* STKBoard.m */; };
+		605622F6F65E95DE528ADF33 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 60562EF515F2F6CC0365476C /* AppDelegate.m */; };
+		605622FD25FDB545842449F6 /* STKCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 6056228B7444A5A4AE95CB93 /* STKCard.m */; };
+		605624CCD386EFE18A74B76D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60562EDA82A0A40C860DE048 /* Main.storyboard */; };
+		605626F1ABD4AA94BD310EFC /* STKGameEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 605622C10D0D4C88FD0F5D28 /* STKGameEngine.m */; };
+		60562840748AE3C1EB62E68B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60562E74AA3544B3827C8A2F /* ViewController.m */; };
+		60562F58C176D7041BD2E871 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6056248224FA9F87A42D17DE /* LaunchScreen.xib */; };
 		88EEFE941B49110200D6FE57 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 88EEFE931B49110200D6FE57 /* main.m */; };
-		88EEFE971B49110200D6FE57 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 88EEFE961B49110200D6FE57 /* AppDelegate.m */; };
-		88EEFE9A1B49110200D6FE57 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 88EEFE991B49110200D6FE57 /* ViewController.m */; };
-		88EEFE9D1B49110200D6FE57 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 88EEFE9B1B49110200D6FE57 /* Main.storyboard */; };
 		88EEFE9F1B49110200D6FE57 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88EEFE9E1B49110200D6FE57 /* Images.xcassets */; };
-		88EEFEA21B49110200D6FE57 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88EEFEA01B49110200D6FE57 /* LaunchScreen.xib */; };
 		88EEFEAE1B49110200D6FE57 /* SolitaireTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 88EEFEAD1B49110200D6FE57 /* SolitaireTests.m */; };
 /* End PBXBuildFile section */
 
@@ -27,16 +30,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6056203663CA661FE2FA8EE9 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		605620C1FEC80D022B0D2DED /* STKBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STKBoard.m; sourceTree = "<group>"; };
+		6056228B7444A5A4AE95CB93 /* STKCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STKCard.m; sourceTree = "<group>"; };
+		605622C10D0D4C88FD0F5D28 /* STKGameEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STKGameEngine.m; sourceTree = "<group>"; };
+		6056238B04984F67675082D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		605623CA00B197CF11BD8DF3 /* STKCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STKCard.h; sourceTree = "<group>"; };
+		605623F5245166FD3AB242C7 /* STKGameEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STKGameEngine.h; sourceTree = "<group>"; };
+		605629665A152730F1CCA769 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		60562B0C61342F42B1341028 /* STKBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STKBoard.h; sourceTree = "<group>"; };
+		60562E74AA3544B3827C8A2F /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		60562EF515F2F6CC0365476C /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		60562F55E7DBDD9D66E21B98 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		88EEFE8E1B49110200D6FE57 /* Solitaire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Solitaire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88EEFE921B49110200D6FE57 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		88EEFE931B49110200D6FE57 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		88EEFE951B49110200D6FE57 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		88EEFE961B49110200D6FE57 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		88EEFE981B49110200D6FE57 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		88EEFE991B49110200D6FE57 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		88EEFE9C1B49110200D6FE57 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		88EEFE9E1B49110200D6FE57 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		88EEFEA11B49110200D6FE57 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		88EEFEA71B49110200D6FE57 /* SolitaireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SolitaireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		88EEFEAC1B49110200D6FE57 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		88EEFEAD1B49110200D6FE57 /* SolitaireTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SolitaireTests.m; sourceTree = "<group>"; };
@@ -60,6 +69,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		605624E8CDA0A89E6CE27EC0 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				605620C1FEC80D022B0D2DED /* STKBoard.m */,
+				60562B0C61342F42B1341028 /* STKBoard.h */,
+				605622C10D0D4C88FD0F5D28 /* STKGameEngine.m */,
+				605623F5245166FD3AB242C7 /* STKGameEngine.h */,
+				6056228B7444A5A4AE95CB93 /* STKCard.m */,
+				605623CA00B197CF11BD8DF3 /* STKCard.h */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
 		88EEFE851B49110200D6FE57 = {
 			isa = PBXGroup;
 			children = (
@@ -81,14 +103,9 @@
 		88EEFE901B49110200D6FE57 /* Solitaire */ = {
 			isa = PBXGroup;
 			children = (
-				88EEFE951B49110200D6FE57 /* AppDelegate.h */,
-				88EEFE961B49110200D6FE57 /* AppDelegate.m */,
-				88EEFE981B49110200D6FE57 /* ViewController.h */,
-				88EEFE991B49110200D6FE57 /* ViewController.m */,
-				88EEFE9B1B49110200D6FE57 /* Main.storyboard */,
 				88EEFE9E1B49110200D6FE57 /* Images.xcassets */,
-				88EEFEA01B49110200D6FE57 /* LaunchScreen.xib */,
 				88EEFE911B49110200D6FE57 /* Supporting Files */,
+				605624E8CDA0A89E6CE27EC0 /* Domain */,
 			);
 			path = Solitaire;
 			sourceTree = "<group>";
@@ -98,6 +115,12 @@
 			children = (
 				88EEFE921B49110200D6FE57 /* Info.plist */,
 				88EEFE931B49110200D6FE57 /* main.m */,
+				6056248224FA9F87A42D17DE /* LaunchScreen.xib */,
+				60562EDA82A0A40C860DE048 /* Main.storyboard */,
+				6056203663CA661FE2FA8EE9 /* ViewController.h */,
+				60562E74AA3544B3827C8A2F /* ViewController.m */,
+				60562F55E7DBDD9D66E21B98 /* AppDelegate.h */,
+				60562EF515F2F6CC0365476C /* AppDelegate.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -199,9 +222,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88EEFE9D1B49110200D6FE57 /* Main.storyboard in Resources */,
-				88EEFEA21B49110200D6FE57 /* LaunchScreen.xib in Resources */,
 				88EEFE9F1B49110200D6FE57 /* Images.xcassets in Resources */,
+				60562F58C176D7041BD2E871 /* LaunchScreen.xib in Resources */,
+				605624CCD386EFE18A74B76D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,9 +242,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88EEFE9A1B49110200D6FE57 /* ViewController.m in Sources */,
-				88EEFE971B49110200D6FE57 /* AppDelegate.m in Sources */,
 				88EEFE941B49110200D6FE57 /* main.m in Sources */,
+				605620DE979C5A2E5972DF7D /* STKBoard.m in Sources */,
+				60562840748AE3C1EB62E68B /* ViewController.m in Sources */,
+				605622F6F65E95DE528ADF33 /* AppDelegate.m in Sources */,
+				605626F1ABD4AA94BD310EFC /* STKGameEngine.m in Sources */,
+				605622FD25FDB545842449F6 /* STKCard.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,20 +270,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		88EEFE9B1B49110200D6FE57 /* Main.storyboard */ = {
+		6056248224FA9F87A42D17DE /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				88EEFE9C1B49110200D6FE57 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		88EEFEA01B49110200D6FE57 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				88EEFEA11B49110200D6FE57 /* Base */,
+				605629665A152730F1CCA769 /* Base */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		60562EDA82A0A40C860DE048 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6056238B04984F67675082D1 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
