@@ -314,4 +314,21 @@
     }
 }
 
+- (void)testCanFlipStockTableauWhenTableauIsEmptyAndStockTableauIsNotEmpty
+{
+    // first tableau stock is always empty
+    NSMutableArray *tableau = [[self board] tableauAtIndex:1];
+    [tableau removeAllObjects];
+
+    XCTAssertTrue([[self engine] canFlipStockTableauAtIndex:1]);
+}
+
+- (void)testCanNotFlipStockTableauWhenStockTableauIsEmpty {
+    // first tableau stock is always empty
+    XCTAssertFalse([[self engine] canFlipStockTableauAtIndex:0]);
+}
+
+- (void)testCanNotFlipStockTableauWhenTableauIsNotEmpty {
+    XCTAssertFalse([[self engine] canFlipStockTableauAtIndex:1]);
+}
 @end
