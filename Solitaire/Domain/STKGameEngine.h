@@ -27,6 +27,7 @@
 - (BOOL)canDrawStockToWaste;
 - (BOOL)canResetWasteToStock;
 - (BOOL)canGrab:(STKCard *)card;
+- (BOOL)canFlipStockTableauAtIndex:(NSUInteger)index;
 
 - (void)drawStockToWaste;
 - (void)resetWasteToStock;

@@ -82,6 +82,14 @@
     return NO;
 }
 
+- (BOOL)canFlipStockTableauAtIndex:(NSUInteger)index
+{
+    NSArray *stockTableau = [self stockTableauAtIndex:index];
+    NSArray *tableau = [self tableauAtIndex:index];
+
+    return [stockTableau count] > 0 && [tableau count] == 0;
+}
+
 - (void)dealCards:(NSArray *)cards
 {
     NSMutableArray *deck = [cards mutableCopy];
