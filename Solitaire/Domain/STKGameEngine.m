@@ -3,17 +3,29 @@
 #import "STKMove.h"
 
 @interface STKGameEngine ()
-@property(nonatomic, strong) STKBoard *board;
+@property (nonatomic, strong) STKBoard *board;
+@property (nonatomic) NSUInteger drawCount;
 @end
 
 @implementation STKGameEngine
 
++ (NSUInteger)defaultDrawCount
+{
+    return 3;
+}
+
 - (instancetype)initWithBoard:(STKBoard *)board
+{
+    return [self initWithBoard:board drawCount:[[self class] defaultDrawCount]];
+}
+
+- (instancetype)initWithBoard:(STKBoard *)board drawCount:(NSUInteger)count
 {
     self = [super init];
 
     if (self) {
         [self setBoard:board];
+        [self setDrawCount:count];
     }
 
     return self;
@@ -135,6 +147,25 @@
     STKMove *move = [STKMove moveWithCards:cards sourcePileID:[[self board] sourcePileIDForCard:card]];
 
     return move;
+}
+
+- (void)drawStockToWaste
+{
+    NSUInteger availableDrawCount = MIN([[self stock] count], [self drawCount]);
+    for (NSUInteger i = 0; i < availableDrawCount; ++i) {
+        [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
+    }
+}
+
+- (void)resetWasteToStock
+{
+    if (![self canResetWasteToStock]) {
+        return;
+    }
+
+    while ([[self waste] count] > 0) {
+        [STKBoard moveTopCard:[[self board] waste] toPile:[[self board] stock]];
+    }
 }
 
 @end
