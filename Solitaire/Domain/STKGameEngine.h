@@ -13,6 +13,8 @@
 - (NSArray *)stockTableauAtIndex:(NSUInteger)tableauIndex;
 - (NSArray *)foundationAtIndex:(NSUInteger)foundationIndex;
 
+- (BOOL)canDrawStockToWaste;
+- (BOOL)canResetWasteToStock;
 
 - (void)dealCards:(NSArray *)deck;
 

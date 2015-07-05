@@ -42,6 +42,16 @@
     return [[[self board] foundationAtIndex:foundationIndex] copy];
 }
 
+- (BOOL)canDrawStockToWaste
+{
+    return [[self stock] count] > 0;
+}
+
+- (BOOL)canResetWasteToStock
+{
+    return [[self stock] count] == 0 && [[self waste] count] > 0;
+}
+
 - (void)dealCards:(NSArray *)cards
 {
     NSMutableArray *deck = [cards mutableCopy];

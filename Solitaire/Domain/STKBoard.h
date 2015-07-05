@@ -14,6 +14,9 @@
 + (NSUInteger)numberOfFoundations;
 
 - (NSMutableArray *)foundationAtIndex:(NSUInteger)foundationIndex;
+
++ (void)moveTopCard:(NSMutableArray *)sourcePile toPile:(NSMutableArray *)toPile;
+
 - (NSMutableArray *)tableauAtIndex:(NSUInteger)tableauIndex;
 - (NSMutableArray *)stockTableauAtIndex:(NSUInteger)tableauIndex;
 

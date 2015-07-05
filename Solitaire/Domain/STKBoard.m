@@ -45,6 +45,14 @@
     return self;
 }
 
++ (void)moveTopCard:(NSMutableArray *)sourcePile toPile:(NSMutableArray *)toPile
+{
+    if ([sourcePile count] > 0) {
+        [toPile addObject:[sourcePile lastObject]];
+        [sourcePile removeLastObject];
+    }
+}
+
 - (NSMutableArray *)foundationAtIndex:(NSUInteger)foundationIndex
 {
     return [self foundations][foundationIndex];
