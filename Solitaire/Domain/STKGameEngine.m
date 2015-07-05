@@ -1,5 +1,6 @@
 #import "STKGameEngine.h"
 #import "STKCard.h"
+#import "STKMove.h"
 
 @interface STKGameEngine ()
 @property(nonatomic, strong) STKBoard *board;
@@ -123,4 +124,17 @@
     }
     return [tableaus copy];
 }
+
+- (STKMove *)grabPileFromCard:(STKCard *)card
+{
+    if ([self canGrab:card] == false) {
+        return nil;
+    }
+
+    NSArray *cards = [[self board] grabPileFromCard:card];
+    STKMove *move = [STKMove moveWithCards:cards sourcePileID:[[self board] sourcePileIDForCard:card]];
+
+    return move;
+}
+
 @end

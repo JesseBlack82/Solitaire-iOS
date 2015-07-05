@@ -97,4 +97,59 @@
     return NO;
 }
 
+- (NSArray *)grabPileFromCard:(STKCard *)card
+{
+    NSMutableArray *sourcePile = [self sourcePileForCard:card];
+    NSUInteger cardLocation = [sourcePile indexOfObject:card];
+
+    NSArray *cards = [sourcePile subarrayWithRange:NSMakeRange(cardLocation, [sourcePile count] - cardLocation)];
+    [sourcePile removeObjectsInArray:cards];
+
+    return cards;
+}
+
+- (STKSourcePileID)sourcePileIDForCard:(STKCard *)card
+{
+    NSMutableArray *sourcePile = [self sourcePileForCard:card];
+    return [self sourcePileIDForPile:sourcePile];
+}
+
+- (NSMutableArray *)sourcePileForCard:(STKCard *)card
+{
+    for (NSMutableArray *pile in [self allPiles]) {
+        if ([pile containsObject:card]) {
+            return pile;
+        }
+    }
+
+    return nil;
+}
+
+- (NSMutableArray *)sourcePile:(STKSourcePileID)pileID
+{
+    return [self allPiles][pileID];
+}
+
+- (STKSourcePileID)sourcePileIDForPile:(NSMutableArray *)pile
+{
+    return [[self allPiles] indexOfObject:pile];
+}
+
+- (NSMutableArray *)allPiles
+{
+    NSMutableArray *piles = [NSMutableArray array];
+    for (NSUInteger i = 0; i < [[self class] numberOfTableaus]; ++i) {
+        [piles addObject:[[self tableaus] objectAtIndex:i]];
+        [piles addObject:[[self stockTableaus] objectAtIndex:i]];
+    }
+
+    for (NSUInteger i = 0; i < [[self class] numberOfFoundations]; ++i) {
+        [piles addObject:[[self foundations] objectAtIndex:i]];
+    }
+
+    [piles addObject:[self stock]];
+    [piles addObject:[self waste]];
+
+    return piles;
+}
 @end

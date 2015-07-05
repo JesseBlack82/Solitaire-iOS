@@ -3,6 +3,8 @@
 
 @class STKCard;
 
+typedef NSUInteger STKSourcePileID;
+
 @interface STKBoard : NSObject
 
 @property (nonatomic, strong) NSMutableArray* stock;
@@ -27,4 +29,10 @@
 - (BOOL)isTableauCard:(STKCard *)card;
 
 - (BOOL)isTopFoundationCard:(STKCard *)card;
+
+- (NSArray *)grabPileFromCard:(STKCard *)card;
+
+- (STKSourcePileID)sourcePileIDForCard:(STKCard *)card;
+
+- (STKSourcePileID)sourcePileIDForPile:(NSMutableArray *)pile;
 @end

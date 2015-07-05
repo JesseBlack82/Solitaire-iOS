@@ -1,8 +1,9 @@
 
 #import <Foundation/Foundation.h>
-#import "STKBoard.h""
+#import "STKBoard.h"
 
 @class STKCard;
+@class STKMove;
 
 @interface STKGameEngine : NSObject
 
@@ -24,4 +25,6 @@
 - (NSArray *)foundations;
 
 - (NSArray *)tableaus;
+
+- (STKMove *)grabPileFromCard:(STKCard *)card;
 @end
