@@ -388,7 +388,7 @@
     XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPileID:tableauID]);
 }
 
-- (void)testCanMoveKingWhenTableauAndStockTableauAreEmpty {
+- (void)testCanMoveKingToTableauWhenTableauAndStockTableauAreEmpty {
     NSMutableArray *stockTableau = [[[self board] stockTableaus] firstObject];
     NSMutableArray *tableau = [[[self board] tableaus] firstObject];
     [stockTableau removeAllObjects];
@@ -396,12 +396,54 @@
 
     STKPileID tableauID = [[self board] pileIDForPile:tableau];
 
-    NSArray *cards = @[
-            [STKCard cardWithRank:STKCardRankKing suit:STKCardSuitClubs]
-    ];
+    NSArray *cards = @[[STKCard cardWithRank:STKCardRankKing suit:-1]];
 
     STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
     XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:tableauID]);
+}
+
+- (void)testCanMoveAceToFoundationWhenFoundationIsEmpty {
+    NSMutableArray *foundation = [[[self board] foundations] firstObject];
+    STKPileID foundationID = [[self board] pileIDForPile:foundation];
+
+    NSArray *cards = @[[STKCard cardWithRank:STKCardRankAce suit:-1]];
+
+    STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
+    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:foundationID]);
+}
+
+- (void)testCanMoveValidCardToNonEmptyFoundation {
+    NSMutableArray *foundation = [[[self board] foundations] firstObject];
+    STKPileID foundationID = [[self board] pileIDForPile:foundation];
+
+    [foundation addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
+    NSArray *cards = @[[STKCard cardWithRank:STKCardRankTwo suit:STKCardSuitHearts]];
+
+    STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
+    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:foundationID]);
+}
+
+- (void)testCanNotMoveInvalidCardToNonEmptyFoundation {
+    NSMutableArray *foundation = [[[self board] foundations] firstObject];
+    STKPileID foundationID = [[self board] pileIDForPile:foundation];
+
+    [foundation addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
+    NSArray *cards = @[[STKCard cardWithRank:STKCardRankKing suit:STKCardSuitHearts]];
+
+    STKMove *invalidMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
+    XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPileID:foundationID]);
+}
+
+- (void)testCanNotMoveMultipleCardsToFoundation {
+    NSMutableArray *foundation = [[[self board] foundations] firstObject];
+    STKPileID foundationID = [[self board] pileIDForPile:foundation];
+
+    [foundation addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
+    NSArray *cards = @[[STKCard cardWithRank:STKCardRankTwo suit:STKCardSuitHearts],
+            [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitHearts]];
+
+    STKMove *invalidMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
+    XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPileID:foundationID]);
 }
 
 @end
