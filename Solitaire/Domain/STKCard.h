@@ -33,6 +33,7 @@ typedef enum {
 
 + (NSArray *)completeAscendingSuit:(STKCardSuit)suit;
 + (BOOL)areCardsDescendingRankWithAlternatingColors:(NSArray *)cards;
++ (BOOL)areCardsAscendingRankWithMatchingSuit:(NSArray *)cards;
 
 + (instancetype)cardWithRank:(STKCardRank)rank suit:(STKCardSuit)suit;
 - (id)initWithRank:(STKCardRank)rank suit:(STKCardSuit)suit;
@@ -44,4 +45,5 @@ typedef enum {
 - (BOOL)isCardNextDescendingRank:(STKCard *)card;
 
 
+- (BOOL)isCardNextAscendingRank:(STKCard *)card;
 @end

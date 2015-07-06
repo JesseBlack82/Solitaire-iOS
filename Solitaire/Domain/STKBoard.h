@@ -25,7 +25,7 @@ typedef enum {
 + (NSUInteger)numberOfFoundations;
 + (void)moveTopCard:(NSMutableArray *)sourcePile toPile:(NSMutableArray *)toPile;
 
-- (STKPileType)pileTypeForPileID:(STKPileID)pileID;
++ (STKPileType)pileTypeForPileID:(STKPileID)pileID;
 
 - (NSMutableArray *)foundationAtIndex:(NSUInteger)foundationIndex;
 - (NSMutableArray *)tableauAtIndex:(NSUInteger)tableauIndex;
@@ -37,6 +37,9 @@ typedef enum {
 
 - (STKPileID)pileIDForCard:(STKCard *)card;
 - (STKPileID)pileIDForPile:(NSMutableArray *)pile;
+
+- (NSMutableArray *)allPiles;
+
 - (NSMutableArray *)getPile:(STKPileID)pileID;
 
 - (NSArray *)grabPileFromCard:(STKCard *)card;

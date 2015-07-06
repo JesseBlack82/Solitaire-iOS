@@ -79,6 +79,26 @@
     return YES;
 }
 
++ (BOOL)areCardsAscendingRankWithMatchingSuit:(NSArray *)cards
+{
+    if ([cards count] == 0) {
+        return NO;
+    }
+
+    STKCard *previousCard;
+    for (STKCard *card in cards) {
+        if (previousCard) {
+            if ([previousCard rank] + 1 != [card rank] || ![previousCard isCardNextAscendingRank:card]) {
+                return NO;
+            }
+        }
+
+        previousCard = card;
+    }
+
+    return YES;
+}
+
 - (BOOL)isOppositeColor:(STKCard *)card {
     NSArray *redSuits = @[@(STKCardSuitHearts), @(STKCardSuitDiamonds)];
     NSArray *blackSuits = @[@(STKCardSuitClubs), @(STKCardSuitSpades)];
@@ -96,9 +116,21 @@
 
 - (BOOL)isCardNextDescendingRank:(STKCard *)card {
     NSUInteger rank = [[[self class] orderedRanks] indexOfObject:@([self rank])];
-    NSUInteger nextRank= [[[self class] orderedRanks] indexOfObject:@([card rank])];
+    NSUInteger nextRank = [[[self class] orderedRanks] indexOfObject:@([card rank])];
 
     return nextRank == --rank;
 }
 
+- (BOOL)isCardNextAscendingRank:(STKCard *)card
+{
+    NSUInteger rank = [[[self class] orderedRanks] indexOfObject:@([self rank])];
+    NSUInteger nextRank = [[[self class] orderedRanks] indexOfObject:@([card rank])];
+
+    return nextRank == ++rank;
+}
+
+- (BOOL)isEqual:(id)object
+{
+    return self == object;
+}
 @end

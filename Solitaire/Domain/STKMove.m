@@ -7,6 +7,7 @@
 @end
 
 @implementation STKMove
+
 + (STKMove *)moveWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID
 {
     return [[STKMove alloc] initWithCards:cards sourcePileID:sourcePileID];
@@ -22,16 +23,6 @@
     }
 
     return self;
-}
-
-- (NSArray *)cards
-{
-    return _cards;
-}
-
-- (STKPileID)sourcePileID
-{
-    return _sourcePileID;
 }
 
 @end

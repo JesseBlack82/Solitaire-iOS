@@ -54,24 +54,24 @@
     }
 }
 
-- (STKPileType)pileTypeForPileID:(STKPileID)pileID
++ (STKPileType)pileTypeForPileID:(STKPileID)pileID
 {
-    NSMutableArray *pile = [self getPile:pileID];
+    NSMutableArray *types = [NSMutableArray array];
 
-    if ([[self tableaus] containsObject:pile]) {
-        return STKPileTypeTableau;
+    for (int index = 0; index < [self numberOfTableaus]; ++index) {
+        [types addObject:@(STKPileTypeTableau)];
+        [types addObject:@(STKPileTypeStockTableau)];
     }
-    if ([[self stockTableaus] containsObject:pile]) {
-        return STKPileTypeStockTableau;
+
+    for (int index = 0; index < [self numberOfFoundations]; ++index) {
+        [types addObject:@(STKPileTypeFoundation)];
     }
-    if ([self stock] == pile) {
-        return STKPileTypeStock;
-    }
-    if ([self waste] == pile) {
-        return STKPileTypeWaste;
-    }
-    if ([[self foundations] containsObject:pile]) {
-        return STKPileTypeFoundation;
+
+    [types addObject:@(STKPileTypeStock)];
+    [types addObject:@(STKPileTypeWaste)];
+
+    if ([types count] > pileID) {
+        return [[types objectAtIndex:pileID] intValue];
     }
 
     return -1;
@@ -155,7 +155,12 @@
 
 - (STKPileID)pileIDForPile:(NSMutableArray *)pile
 {
-    return [[self allPiles] indexOfObject:pile];
+    for (STKPileID pileID = 0; pileID < [[self allPiles] count]; ++pileID) {
+        if ([self getPile:pileID] == pile) {
+            return pileID;
+        }
+    }
+    return -1;
 }
 
 - (NSMutableArray *)allPiles

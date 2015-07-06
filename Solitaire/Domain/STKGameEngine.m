@@ -14,6 +14,11 @@
     return [STKCard areCardsDescendingRankWithAlternatingColors:tableau];
 }
 
++ (BOOL)isFoundationValid:(NSArray *)foundation
+{
+    return [STKCard areCardsAscendingRankWithMatchingSuit:foundation];
+}
+
 + (NSUInteger)defaultDrawCount
 {
     return 3;
@@ -102,13 +107,28 @@
 
 - (BOOL)canMoveCards:(NSArray *)cards toPileID:(STKPileID)targetPileID
 {
-    switch ([[self board] pileTypeForPileID:targetPileID]) {
+    NSArray *pile = [[self board] getPile:targetPileID];
+    switch ([STKBoard pileTypeForPileID:targetPileID]) {
         case STKPileTypeTableau:
-            return [self canMoveCards:cards toTableau:[[self board] getPile:targetPileID]];
+            return [self canMoveCards:cards toTableau:pile];
+        case STKPileTypeFoundation:
+            return [self canMoveCards:cards toFoundation:pile];
         default: break;
     }
 
     return NO;
+}
+
+- (BOOL)canMoveCards:(NSArray *)cards toFoundation:(NSArray *)foundation
+{
+    if ([cards count] != 1) {
+        return NO;
+    }
+
+    NSMutableArray *temporaryFoundation = [foundation mutableCopy];
+    [temporaryFoundation addObjectsFromArray:cards];
+
+    return [[self class] isFoundationValid:temporaryFoundation];
 }
 
 - (BOOL)canMoveCards:(NSArray *)cards toTableau:(NSArray *)tableau
@@ -120,7 +140,6 @@
     STKCard *toCard = [tableau lastObject];
 
     if ([cards count] > 0 && toCard) {
-#warning mutable copy of mutablearray should be new array?!?
         NSMutableArray *temporaryTableau = [tableau mutableCopy];
         [temporaryTableau addObjectsFromArray:cards];
 

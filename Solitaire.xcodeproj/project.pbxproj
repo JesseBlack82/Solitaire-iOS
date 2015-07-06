@@ -13,6 +13,7 @@
 		605624CCD386EFE18A74B76D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60562EDA82A0A40C860DE048 /* Main.storyboard */; };
 		605626F1ABD4AA94BD310EFC /* STKGameEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 605622C10D0D4C88FD0F5D28 /* STKGameEngine.m */; };
 		60562840748AE3C1EB62E68B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 60562E74AA3544B3827C8A2F /* ViewController.m */; };
+		60562B6118D81F09C60C4BB7 /* BoardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 605629737D5986C82104BF0A /* BoardTests.m */; };
 		60562CCB95E23EC3BF7C3847 /* STKMove.m in Sources */ = {isa = PBXBuildFile; fileRef = 60562362FE0EF69257F5DF68 /* STKMove.m */; };
 		60562F58C176D7041BD2E871 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6056248224FA9F87A42D17DE /* LaunchScreen.xib */; };
 		88EEFE941B49110200D6FE57 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 88EEFE931B49110200D6FE57 /* main.m */; };
@@ -40,6 +41,7 @@
 		605623CA00B197CF11BD8DF3 /* STKCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STKCard.h; sourceTree = "<group>"; };
 		605623F5245166FD3AB242C7 /* STKGameEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STKGameEngine.h; sourceTree = "<group>"; };
 		605629665A152730F1CCA769 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		605629737D5986C82104BF0A /* BoardTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BoardTests.m; sourceTree = "<group>"; };
 		60562B0C61342F42B1341028 /* STKBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STKBoard.h; sourceTree = "<group>"; };
 		60562E74AA3544B3827C8A2F /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		60562EF515F2F6CC0365476C /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 			children = (
 				88EEFEAD1B49110200D6FE57 /* SolitaireTests.m */,
 				88EEFEAB1B49110200D6FE57 /* Supporting Files */,
+				605629737D5986C82104BF0A /* BoardTests.m */,
 			);
 			path = SolitaireTests;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88EEFEAE1B49110200D6FE57 /* SolitaireTests.m in Sources */,
+				60562B6118D81F09C60C4BB7 /* BoardTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

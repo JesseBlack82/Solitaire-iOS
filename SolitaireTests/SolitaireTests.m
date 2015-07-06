@@ -408,7 +408,7 @@
 
     NSArray *cards = @[[STKCard cardWithRank:STKCardRankAce suit:-1]];
 
-    STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
+    STKMove *validMove = [STKMove moveWithCards:cards sourcePileID:-1];
     XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:foundationID]);
 }
 
