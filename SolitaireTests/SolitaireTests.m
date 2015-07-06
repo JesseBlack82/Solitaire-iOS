@@ -76,7 +76,7 @@
     }
 }
 
-- (void)testCanDrawStockToWasteWhenStockIsNonEmpty {
+- (void)testCanDrawStockToWasteWhenStockIsNotEmpty {
     XCTAssertTrue([[self engine] canDrawStockToWaste]);
 }
 
@@ -86,13 +86,13 @@
     XCTAssertFalse([[self engine] canDrawStockToWaste]);
 }
 
-- (void)testCanRedealWasteToStockWhenStockIsEmptyAndWasteIsNonEmpty {
+- (void)testCanRedealWasteToStockWhenStockIsEmptyAndWasteIsNotEmpty {
     [self moveStockCardsToWaste];
 
     XCTAssertTrue([[self engine] canResetWasteToStock]);
 }
 
-- (void)testCanNotRedealWasteToStockWhenStockIsNonEmpty {
+- (void)testCanNotRedealWasteToStockWhenStockIsNotEmpty {
     // stock is already none empty, make sure to populate waste to make the next test more valuable
     [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
 
@@ -330,7 +330,7 @@
     XCTAssertTrue([[self engine] isBoardSolved]);
 }
 
-- (void)testCanMoveValidCardsToNonEmptyTableau {
+- (void)testCanMoveValidCardsToNotEmptyTableau {
     STKPlayableTableauPile *tableau = [[[self board] playableTableaus] firstObject];
     [[tableau cards] removeAllObjects];
     [[tableau cards] addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
@@ -342,7 +342,7 @@
     XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPile:tableau]);
 }
 
-- (void)testCanNotMoveInvalidCardsToNonEmptyTableau {
+- (void)testCanNotMoveInvalidCardsToNotEmptyTableau {
     STKPlayableTableauPile *tableau = [[[self board] playableTableaus] firstObject];
     [[tableau cards] removeAllObjects];
     [[tableau cards] addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
@@ -375,7 +375,7 @@
     XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPile:foundation]);
 }
 
-- (void)testCanMoveValidCardToNonEmptyFoundation {
+- (void)testCanMoveValidCardToNotEmptyFoundation {
     STKFoundationPile *foundation = [[[self board] foundations] firstObject];
     [[foundation cards] addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
 
@@ -385,7 +385,7 @@
     XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPile:foundation]);
 }
 
-- (void)testCanNotMoveInvalidCardToNonEmptyFoundation {
+- (void)testCanNotMoveInvalidCardToNotEmptyFoundation {
     STKFoundationPile *foundation = [[[self board] foundations] firstObject];
     [[foundation cards] addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
 
