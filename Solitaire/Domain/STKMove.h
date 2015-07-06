@@ -1,14 +1,14 @@
+
 #import <Foundation/Foundation.h>
 
 #import "STKBoard.h"
 
-
 @interface STKMove : NSObject
 
-+ (STKMove *)moveWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID;
-- (instancetype)initWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID;
++ (STKMove *)moveWithCards:(NSArray *)cards sourcePile:(STKPile *)sourcePile;
+- (instancetype)initWithCards:(NSArray *)cards sourcePile:(STKPile *)sourcePile;
 
 - (NSArray *)cards;
-- (STKPileID)sourcePileID;
+- (STKPile *)sourcePile;
 
 @end

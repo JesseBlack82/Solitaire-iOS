@@ -3,23 +3,23 @@
 
 @interface STKMove ()
 @property(nonatomic, strong) NSArray *cards;
-@property(nonatomic) STKPileID sourcePileID;
+@property(nonatomic) STKPile * sourcePile;
 @end
 
 @implementation STKMove
 
-+ (STKMove *)moveWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID
++ (STKMove *)moveWithCards:(NSArray *)cards sourcePile:(STKPile *)sourcePile
 {
-    return [[STKMove alloc] initWithCards:cards sourcePileID:sourcePileID];
+    return [[STKMove alloc] initWithCards:cards sourcePile:sourcePile];
 }
 
-- (instancetype)initWithCards:(NSArray *)cards sourcePileID:(STKPileID)sourcePileID
+- (instancetype)initWithCards:(NSArray *)cards sourcePile:(STKPile *)sourcePile
 {
     self = [super init];
 
     if (self) {
         [self setCards:cards];
-        [self setSourcePileID:sourcePileID];
+        [self setSourcePile:sourcePile];
     }
 
     return self;

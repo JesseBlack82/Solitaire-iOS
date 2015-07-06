@@ -6,10 +6,6 @@
 #import "STKMove.h"
 
 @interface SolitaireTests : XCTestCase
-
-@end
-
-@interface SolitaireTests ()
 @property(nonatomic, strong) STKBoard *board;
 @property(nonatomic, strong) STKGameEngine *engine;
 @end
@@ -48,23 +44,23 @@
 
 - (void)testFoundationsHave0CardsAfterSetup
 {
-    for (NSArray *foundation in [[self board] foundations]) {
-        XCTAssertEqual(0, [foundation count]);
+    for (STKFoundationPile *foundation in [[self board] foundations]) {
+        XCTAssertFalse([foundation hasCards]);
     }
 }
 
 - (void)testStockTableausHaveAscendingCounts0toNAfterSetup //0-6
 {
     NSUInteger expected = 0;
-    for (NSArray *stockTableau in [[self board] stockTableaus]) {
-        XCTAssertEqual(expected++, [stockTableau count]);
+    for (STKStockTableauPile *stockTableau in [[self board] stockTableaus]) {
+        XCTAssertEqual(expected++, [[stockTableau cards] count]);
     }
 }
 
 - (void)testTableausHave1CardAfterSetup
 {
-    for (NSArray *tableau in [[self board] tableaus]) {
-        XCTAssertEqual(1, [tableau count]);
+    for (STKPlayableTableauPile *tableau in [[self board] playableTableaus]) {
+        XCTAssertEqual(1, [[tableau cards] count]);
     }
 }
 
@@ -101,8 +97,8 @@
 
 - (void)testCanNotRedealWasteToStockWhenWasteIsEmpty
 {
-    [[[self board] stock] removeAllObjects];
-    [[[self board] waste] removeAllObjects];
+    [[self board] clearWaste];
+    [[self board] clearStock];
 
     XCTAssertFalse([[self engine] canResetWasteToStock]);
 }
@@ -130,24 +126,24 @@
 
 - (void)testCanGrabTopFoundationCards
 {
-    for (NSMutableArray *foundation in [[self board] foundations]) {
+    for (STKPile *foundation in [[self board] foundations]) {
         [STKBoard moveTopCard:[[self board] stock] toPile:foundation];
 
-        XCTAssertTrue([[self engine] canGrab:[foundation lastObject]]);
+        XCTAssertTrue([[self engine] canGrab:[[foundation cards] lastObject]]);
     }
 }
 
 - (void)testCanNotGrabCoveredFoundationCards
 {
     while ([[[self engine] stock] count] > 0) {
-        for (NSMutableArray *foundation in [[self board] foundations]) {
+        for (STKFoundationPile *foundation in [[self board] foundations]) {
             [STKBoard moveTopCard:[[self board] stock] toPile:foundation];
         }
     }
 
-    for (NSArray *foundation in [[self engine] foundations]) {
-        for (int i = 1; i < [foundation count]; ++i) {
-            XCTAssertFalse([[self engine] canGrab:[foundation objectAtIndex:0]]);
+    for (STKPile *foundationPile in [[self engine] foundations]) {
+        for (int i = 0; i < [[foundationPile cards] count] - 1; ++i) {
+            XCTAssertFalse([[self engine] canGrab:[foundationPile cards][i]]);
         }
     }
 }
@@ -155,12 +151,12 @@
 - (void)testCanGrabTopTableauCards
 {
     while ([[[self engine] stock] count] > 0) {
-        for (NSMutableArray *tableau in [[self board] tableaus]) {
+        for (STKPlayableTableauPile *tableau in [[self board] playableTableaus]) {
             [STKBoard moveTopCard:[[self board] stock] toPile:tableau];
         }
     }
 
-    for (NSArray *tableau in [[self engine] tableaus]) {
+    for (NSArray *tableau in [[self engine] playableTableaus]) {
         XCTAssertTrue([[self engine] canGrab:[tableau lastObject]]);
     }
 }
@@ -168,12 +164,12 @@
 - (void)testCanGrabCoveredCardsFromTableau // from covered card all the way to top
 {
     while ([[[self engine] stock] count] > 0) {
-        for (NSMutableArray *tableau in [[self board] tableaus]) {
+        for (STKPlayableTableauPile *tableau in [[self board] playableTableaus]) {
             [STKBoard moveTopCard:[[self board] stock] toPile:tableau];
         }
     }
 
-    for (NSArray *tableau in [[self engine] tableaus]) {
+    for (NSArray *tableau in [[self engine] playableTableaus]) {
         for (STKCard *card in tableau) {
             if (card == [tableau lastObject]) {
                 return;
@@ -185,78 +181,76 @@
 
 - (void)testGrabbingTopWasteCard {
     [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
-
     STKCard *topWasteCard = [[[self engine] waste] lastObject];
-    STKMove *move = [[self engine] grabPileFromCard:topWasteCard];
+    STKPile *expectedPile = [[self board] pileContainingCard:topWasteCard];
+
+    STKMove *move = [[self engine] grabTopCardsFromCard:topWasteCard];
 
     XCTAssertEqual([[move cards] firstObject], topWasteCard);
     XCTAssertEqual([[move cards] count], 1);
     XCTAssertFalse([[[self engine] waste] containsObject:topWasteCard]);
 
-    STKPileID expectedPileID = [[self board] pileIDForCard:topWasteCard];
-    XCTAssertEqual(expectedPileID, [move sourcePileID]);
+    XCTAssertEqual(expectedPile, [move sourcePile]);
 }
 
 - (void)testGrabbingTopFoundationCard
 {
-    for (NSMutableArray *foundation in [[self board] foundations]) {
+    for (STKFoundationPile *foundation in [[self board] foundations]) {
         [STKBoard moveTopCard:[[self board] stock] toPile:foundation];
     }
 
     for (NSUInteger i = 0; i < [[[self engine] foundations] count]; ++i) {
         NSArray *foundation = [[self engine] foundationAtIndex:i];
         STKCard *topFoundationCard = [foundation lastObject];
-        STKMove *move = [[self engine] grabPileFromCard:topFoundationCard];
+        STKPile *expectedPile = [[self board] pileContainingCard:topFoundationCard];
+
+        STKMove *move = [[self engine] grabTopCardsFromCard:topFoundationCard];
 
         XCTAssertEqual([[move cards] firstObject], topFoundationCard);
         XCTAssertEqual([[move cards] count], 1);
         XCTAssertFalse([[[self engine] foundationAtIndex:i] containsObject:topFoundationCard]);
 
-        STKPileID expectedPileID = [[self board] pileIDForCard:topFoundationCard];
-        XCTAssertEqual(expectedPileID, [move sourcePileID]);
+        XCTAssertEqual(expectedPile, [move sourcePile]);
     }
 }
 
 - (void)testGrabbingTopTableauCard {
-    for (NSMutableArray *tableau in [[self board] tableaus]) {
+    for (STKPlayableTableauPile *tableau in [[self board] playableTableaus]) {
         [STKBoard moveTopCard:[[self board] stock] toPile:tableau];
     }
 
-    for (NSUInteger i = 0; i < [[[self engine] tableaus] count]; ++i) {
+    for (NSUInteger i = 0; i < [[[self engine] playableTableaus] count]; ++i) {
         NSArray *tableau = [[self engine] tableauAtIndex:i];
         STKCard *topTableauCard = [tableau lastObject];
-        STKMove *move = [[self engine] grabPileFromCard:topTableauCard];
+        STKPile *expectedSourcePile = [[self board] pileContainingCard:topTableauCard];
+
+        STKMove *move = [[self engine] grabTopCardsFromCard:topTableauCard];
 
         XCTAssertEqual([[move cards] firstObject], topTableauCard);
         XCTAssertEqual([[move cards] count], 1);
         XCTAssertFalse([[[self engine] tableauAtIndex:i] containsObject:topTableauCard]);
 
-        STKPileID expectedPileID = [[self board] pileIDForCard:topTableauCard];
-        XCTAssertEqual(expectedPileID, [move sourcePileID]);
+        XCTAssertEqual(expectedSourcePile, [move sourcePile]);
     }
 }
 
 - (void)testGrabbingTopTableauCards {
-    for (NSMutableArray *tableau in [[self board] tableaus]) {
-        [STKBoard moveTopCard:[[self board] stock] toPile:tableau];
-    }
-
-    for (NSArray *tableau in [[self engine] tableaus]) {
+    NSUInteger tableauIndex = 0;
+    for (NSArray *tableau in [[self engine] playableTableaus]) {
         NSUInteger expectedGrabbedCardsCount = [tableau count] - 1;
-        NSUInteger tableauIndex = [[[self engine] tableaus] indexOfObject:tableau];
-        STKPileID expectedPileID = [[self board] pileIDForPile:[[self board] tableauAtIndex:tableauIndex]];
+        STKPile *expectedPile = [[self board] tableauAtIndex:tableauIndex++];
 
         for (STKCard *card in tableau) {
             if (card == [tableau lastObject]) {
                 break;
             }
 
-            STKMove *move = [[self engine] grabPileFromCard:card];
+            STKMove *move = [[self engine] grabTopCardsFromCard:card];
 
             XCTAssertEqual([[move cards] firstObject], card);
             XCTAssertEqual([[move cards] count], expectedGrabbedCardsCount--);
             XCTAssertFalse([tableau containsObject:tableau]);
-            XCTAssertEqual(expectedPileID, [move sourcePileID]);
+            XCTAssertEqual(expectedPile, [move sourcePile]);
         }
     }
 }
@@ -271,7 +265,7 @@
     NSUInteger wasteIndex = [[[self engine] waste] count] - expectedLength;
     for (STKCard *card in expectedWasteEnumerator) {
 
-        XCTAssertEqual(card, [[[self engine] waste] objectAtIndex:wasteIndex++]);
+        XCTAssertEqual(card, [[self engine] waste][wasteIndex++]);
         XCTAssertFalse([[[self engine] stock] containsObject:card]);
     }
 }
@@ -293,7 +287,7 @@
 
     NSUInteger wasteIndex = [[[self engine] waste] count] - expectedLength;
     for (STKCard *card in expectedWasteEnumerator) {
-        XCTAssertEqual(card, [[[self engine] waste] objectAtIndex:wasteIndex++]);
+        XCTAssertEqual(card, [[self engine] waste][wasteIndex++]);
         XCTAssertFalse([[[self engine] stock] containsObject:card]);
     }
 }
@@ -309,7 +303,7 @@
 
     NSUInteger stockIndex = 0;
     for (STKCard *card in expectedStock) {
-        XCTAssertEqual(card, [[[self engine] stock] objectAtIndex:stockIndex++]);
+        XCTAssertEqual(card, [[self engine] stock][stockIndex++]);
         XCTAssertFalse([[[self engine] waste] containsObject:card]);
     }
 }
@@ -317,10 +311,10 @@
 - (void)testCanFlipStockTableauWhenTableauIsEmptyAndStockTableauIsNotEmpty
 {
     // first tableau stock is always empty
-    NSMutableArray *tableau = [[self board] tableauAtIndex:1];
-    [tableau removeAllObjects];
-
-    XCTAssertTrue([[self engine] canFlipStockTableauAtIndex:1]);
+    for (NSUInteger i = 1; i < [[[self engine] playableTableaus] count]; ++i) {
+        [[self board] clearPlayableTableauAtIndex:i];
+        XCTAssertTrue([[self engine] canFlipStockTableauAtIndex:i]);
+    }
 }
 
 - (void)testCanNotFlipStockTableauWhenStockTableauIsEmpty {
@@ -340,110 +334,90 @@
     //set up winning board
 
     for (NSUInteger i = 0; i < [[[self board] foundations] count]; ++i) {
-        NSMutableArray *foundation = [[self board] foundationAtIndex:i];
-        STKCardSuit suit = [[[STKCard allSuits] objectAtIndex:i] intValue];
-        [foundation addObjectsFromArray:[STKCard completeAscendingSuit:suit]];
+        STKFoundationPile *foundation = [[self board] foundationAtIndex:i];
+        STKCardSuit suit = (STKCardSuit) [[STKCard allSuits][i] intValue];
+        [[foundation cards] addObjectsFromArray:[STKCard completeAscendingSuit:suit]];
     }
 
     for (NSUInteger i = 0; i < [STKBoard numberOfTableaus]; ++i) {
-        [[[self board] tableauAtIndex:i] removeAllObjects];
-        [[[self board] stockTableauAtIndex:i] removeAllObjects];
+        [[[[self board] tableauAtIndex:i] cards] removeAllObjects];
+        [[[[self board] stockTableauAtIndex:i] cards] removeAllObjects];
     }
 
-    [[[self board] waste] removeAllObjects];
-    [[[self board] stock] removeAllObjects];
+    [[self board] clearStock];
+    [[self board] clearWaste];
 
     XCTAssertTrue([[self engine] areWinningConditionsSatisfied]);
 }
 
 - (void)testCanMoveValidCardsToNonEmptyTableau {
-    NSMutableArray *tableau = [[[self board] tableaus] firstObject];
-    [tableau removeAllObjects];
-    [tableau addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
-
-    STKPileID tableauID = [[self board] pileIDForPile:tableau];
+    STKPlayableTableauPile *tableau = [[[self board] playableTableaus] firstObject];
+    [[tableau cards] removeAllObjects];
+    [[tableau cards] addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
 
     NSArray *validCards = @[
             [STKCard cardWithRank:STKCardRankFour suit:STKCardSuitHearts],
             [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitClubs]
     ];
 
-    STKMove *validMove = [[STKMove alloc] initWithCards:validCards sourcePileID:kNilOptions];
+    STKMove *validMove = [[STKMove alloc] initWithCards:validCards sourcePile:nil];
 
-    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:tableauID]);
+    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPile:tableau]);
 }
 
 - (void)testCanNotMoveInvalidCardsToNonEmptyTableau {
-    NSMutableArray *tableau = [[[self board] tableaus] firstObject];
-    [tableau addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
-
-    STKPileID tableauID = [[self board] pileIDForPile:tableau];
+    STKPlayableTableauPile *tableau = [[[self board] playableTableaus] firstObject];
+    [[tableau cards] removeAllObjects];
+    [[tableau cards] addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
 
     NSArray *invalidCards = @[
             [STKCard cardWithRank:STKCardRankFive suit:STKCardSuitHearts],
             [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitClubs]
     ];
 
-    STKMove *invalidMove = [[STKMove alloc] initWithCards:invalidCards sourcePileID:-1];
-    XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPileID:tableauID]);
+    STKMove *invalidMove = [[STKMove alloc] initWithCards:invalidCards sourcePile:nil];
+    XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPile:tableau]);
 }
 
 - (void)testCanMoveKingToTableauWhenTableauAndStockTableauAreEmpty {
-    NSMutableArray *stockTableau = [[[self board] stockTableaus] firstObject];
-    NSMutableArray *tableau = [[[self board] tableaus] firstObject];
-    [stockTableau removeAllObjects];
-    [tableau removeAllObjects];
+    STKStockTableauPile *stockTableau = [[[self board] stockTableaus] firstObject];
+    STKPlayableTableauPile *tableau = [[[self board] playableTableaus] firstObject];
+    [[stockTableau cards] removeAllObjects];
+    [[tableau cards] removeAllObjects];
 
-    STKPileID tableauID = [[self board] pileIDForPile:tableau];
+    NSArray *cards = @[[STKCard cardWithRank:STKCardRankKing suit:(STKCardSuit) -1]];
 
-    NSArray *cards = @[[STKCard cardWithRank:STKCardRankKing suit:-1]];
-
-    STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
-    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:tableauID]);
+    STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePile:nil];
+    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPile:tableau]);
 }
 
 - (void)testCanMoveAceToFoundationWhenFoundationIsEmpty {
-    NSMutableArray *foundation = [[[self board] foundations] firstObject];
-    STKPileID foundationID = [[self board] pileIDForPile:foundation];
+    STKFoundationPile *foundation = [[[self board] foundations] firstObject];
 
-    NSArray *cards = @[[STKCard cardWithRank:STKCardRankAce suit:-1]];
+    NSArray *cards = @[[STKCard cardWithRank:STKCardRankAce suit:(STKCardSuit) -1]];
 
-    STKMove *validMove = [STKMove moveWithCards:cards sourcePileID:-1];
-    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:foundationID]);
+    STKMove *validMove = [STKMove moveWithCards:cards sourcePile:nil];
+    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPile:foundation]);
 }
 
 - (void)testCanMoveValidCardToNonEmptyFoundation {
-    NSMutableArray *foundation = [[[self board] foundations] firstObject];
-    STKPileID foundationID = [[self board] pileIDForPile:foundation];
+    STKFoundationPile *foundation = [[[self board] foundations] firstObject];
+    [[foundation cards] addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
 
-    [foundation addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
     NSArray *cards = @[[STKCard cardWithRank:STKCardRankTwo suit:STKCardSuitHearts]];
 
-    STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
-    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPileID:foundationID]);
+    STKMove *validMove = [[STKMove alloc] initWithCards:cards sourcePile:nil];
+    XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPile:foundation]);
 }
 
 - (void)testCanNotMoveInvalidCardToNonEmptyFoundation {
-    NSMutableArray *foundation = [[[self board] foundations] firstObject];
-    STKPileID foundationID = [[self board] pileIDForPile:foundation];
+    STKFoundationPile *foundation = [[[self board] foundations] firstObject];
+    [[foundation cards] addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
 
-    [foundation addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
     NSArray *cards = @[[STKCard cardWithRank:STKCardRankKing suit:STKCardSuitHearts]];
 
-    STKMove *invalidMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
-    XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPileID:foundationID]);
-}
-
-- (void)testCanNotMoveMultipleCardsToFoundation {
-    NSMutableArray *foundation = [[[self board] foundations] firstObject];
-    STKPileID foundationID = [[self board] pileIDForPile:foundation];
-
-    [foundation addObject:[STKCard cardWithRank:STKCardRankAce suit:STKCardSuitHearts]];
-    NSArray *cards = @[[STKCard cardWithRank:STKCardRankTwo suit:STKCardSuitHearts],
-            [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitHearts]];
-
-    STKMove *invalidMove = [[STKMove alloc] initWithCards:cards sourcePileID:-1];
-    XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPileID:foundationID]);
+    STKMove *invalidMove = [[STKMove alloc] initWithCards:cards sourcePile:nil];
+    XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPile:foundation]);
 }
 
 @end

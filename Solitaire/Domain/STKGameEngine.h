@@ -20,7 +20,7 @@
 - (NSArray *)stockTableauAtIndex:(NSUInteger)tableauIndex;
 - (NSArray *)foundationAtIndex:(NSUInteger)foundationIndex;
 - (NSArray *)foundations;
-- (NSArray *)tableaus;
+- (NSArray *)playableTableaus;
 
 - (void)dealCards:(NSArray *)deck;
 
@@ -30,10 +30,10 @@
 - (BOOL)canResetWasteToStock;
 - (BOOL)canGrab:(STKCard *)card;
 - (BOOL)canFlipStockTableauAtIndex:(NSUInteger)index;
-- (BOOL)canCompleteMove:(STKMove *)move withTargetPileID:(STKPileID)targetPileID;
+- (BOOL)canCompleteMove:(STKMove *)move withTargetPile:(STKPile *)targetPile;
 
 - (void)drawStockToWaste;
 - (void)resetWasteToStock;
-- (STKMove *)grabPileFromCard:(STKCard *)card;
+- (STKMove *)grabTopCardsFromCard:(STKCard *)card;
 
 @end

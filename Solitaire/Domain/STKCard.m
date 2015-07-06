@@ -53,7 +53,7 @@
     NSMutableArray *cards = [NSMutableArray array];
 
     for (NSNumber *rank in [self orderedRanks]) {
-        [cards addObject:[STKCard cardWithRank:[rank intValue] suit:suit]];
+        [cards addObject:[STKCard cardWithRank:(STKCardRank) [rank intValue] suit:suit]];
     }
 
     return [cards copy];
@@ -81,14 +81,14 @@
 
 + (BOOL)areCardsAscendingRankWithMatchingSuit:(NSArray *)cards
 {
-    if ([cards count] == 0) {
+    if ([cards count] == 0 || [[cards firstObject] rank] != STKCardRankAce) {
         return NO;
     }
 
     STKCard *previousCard;
     for (STKCard *card in cards) {
         if (previousCard) {
-            if ([previousCard rank] + 1 != [card rank] || ![previousCard isCardNextAscendingRank:card]) {
+            if ([previousCard suit] != [card suit] || ![previousCard isCardNextAscendingRank:card]) {
                 return NO;
             }
         }
@@ -107,11 +107,7 @@
         return [blackSuits containsObject:@([self suit])];
     }
 
-    if ([blackSuits containsObject:@([card suit])]) {
-        return [redSuits containsObject:@([self suit])];
-    }
-
-    return NO;
+    return [blackSuits containsObject:@([card suit])] && [redSuits containsObject:@([self suit])];
 }
 
 - (BOOL)isCardNextDescendingRank:(STKCard *)card {

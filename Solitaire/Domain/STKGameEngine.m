@@ -9,16 +9,6 @@
 
 @implementation STKGameEngine
 
-+ (BOOL)isTableauValid:(NSArray *)tableau
-{
-    return [STKCard areCardsDescendingRankWithAlternatingColors:tableau];
-}
-
-+ (BOOL)isFoundationValid:(NSArray *)foundation
-{
-    return [STKCard areCardsAscendingRankWithMatchingSuit:foundation];
-}
-
 + (NSUInteger)defaultDrawCount
 {
     return 3;
@@ -43,27 +33,27 @@
 
 - (NSArray *)stock
 {
-    return [[[self board] stock] copy];
+    return [[[[self board] stock] cards] copy];
 }
 
 - (NSArray *)waste
 {
-    return [[[self board] waste] copy];
+    return [[[[self board] waste] cards] copy];
 }
 
 - (NSArray *)tableauAtIndex:(NSUInteger)tableauIndex
 {
-    return [[[self board] tableauAtIndex:tableauIndex] copy];
+    return [[[[self board] tableauAtIndex:tableauIndex] cards] copy];
 }
 
 - (NSArray *)stockTableauAtIndex:(NSUInteger)tableauIndex
 {
-    return [[[self board] stockTableauAtIndex:tableauIndex] copy];
+    return [[[[self board] stockTableauAtIndex:tableauIndex] cards] copy];
 }
 
 - (NSArray *)foundationAtIndex:(NSUInteger)foundationIndex
 {
-    return [[[self board] foundationAtIndex:foundationIndex] copy];
+    return [[[[self board] foundationAtIndex:foundationIndex] cards] copy];
 }
 
 - (BOOL)canDrawStockToWaste
@@ -82,14 +72,11 @@
         return YES;
     }
 
-    if ([[self board] isTableauCard:card]) {
+    if ([[self board] isPlayableTableauCard:card]) {
         return YES;
     }
 
-    if ([[self board] isTopFoundationCard:card]) {
-        return YES;
-    }
-    return NO;
+    return [[self board] isTopFoundationCard:card];
 }
 
 - (BOOL)canFlipStockTableauAtIndex:(NSUInteger)index
@@ -100,96 +87,56 @@
     return [stockTableau count] > 0 && [tableau count] == 0;
 }
 
-- (BOOL)canCompleteMove:(STKMove *)move withTargetPileID:(STKPileID)targetPileID
+- (BOOL)canCompleteMove:(STKMove *)move withTargetPile:(STKPile *)targetPile
 {
-    return [self canMoveCards:[move cards] toPileID:(STKPileID)targetPileID];
+    return [self canMoveCards:[move cards] toPile:targetPile];
 }
 
-- (BOOL)canMoveCards:(NSArray *)cards toPileID:(STKPileID)targetPileID
+- (BOOL)canMoveCards:(NSArray *)cards toPile:(STKPile *)targetPile
 {
-    NSArray *pile = [[self board] getPile:targetPileID];
-    switch ([STKBoard pileTypeForPileID:targetPileID]) {
-        case STKPileTypeTableau:
-            return [self canMoveCards:cards toTableau:pile];
-        case STKPileTypeFoundation:
-            return [self canMoveCards:cards toFoundation:pile];
-        default: break;
+    STKPile *pileCopy = [targetPile copy];
+    if ([pileCopy conformsToProtocol:@protocol(STKPlayablePile)]) {
+        return [(id <STKPlayablePile>) pileCopy canAddCards:cards];
     }
 
     return NO;
-}
-
-- (BOOL)canMoveCards:(NSArray *)cards toFoundation:(NSArray *)foundation
-{
-    if ([cards count] != 1) {
-        return NO;
-    }
-
-    NSMutableArray *temporaryFoundation = [foundation mutableCopy];
-    [temporaryFoundation addObjectsFromArray:cards];
-
-    return [[self class] isFoundationValid:temporaryFoundation];
-}
-
-- (BOOL)canMoveCards:(NSArray *)cards toTableau:(NSArray *)tableau
-{
-    if ([[cards firstObject] rank] == STKCardRankKing) {
-        return [[self associatedStockTableau:tableau] count] == 0 && [tableau count] == 0;
-    }
-
-    STKCard *toCard = [tableau lastObject];
-
-    if ([cards count] > 0 && toCard) {
-        NSMutableArray *temporaryTableau = [tableau mutableCopy];
-        [temporaryTableau addObjectsFromArray:cards];
-
-        return [[self class] isTableauValid:temporaryTableau];
-    }
-
-    return NO;
-}
-
-- (NSMutableArray *)associatedStockTableau:(NSArray *)tableau
-{
-    NSUInteger index = [[[self board] tableaus] indexOfObject:tableau];
-    return [[self board] stockTableauAtIndex:index];
 }
 
 - (void)dealCards:(NSArray *)cards
 {
     NSMutableArray *deck = [cards mutableCopy];
 
-    NSMutableArray *remainingStockStacks = [[[[self board] stockTableaus] subarrayWithRange:NSMakeRange(1,
+    NSMutableArray *stockTableauPiles = [[[[self board] stockTableaus] subarrayWithRange:NSMakeRange(1,
             [STKBoard numberOfTableaus] - 1)] mutableCopy];
-    NSMutableArray *remainingPlayStacks = [[[self board] tableaus] mutableCopy];
+    NSMutableArray * playableTableaus = [[[self board] playableTableaus] mutableCopy];
 
-    void (^dealCard)(NSMutableArray *, NSMutableArray *) = ^(NSMutableArray *stack, NSMutableArray *remainingCards) {
-        [stack addObject:[remainingCards lastObject]];
+    void (^dealCard)(STKPile *, NSMutableArray *) = ^(STKPile *pile, NSMutableArray *remainingCards) {
+        [[pile cards] addObject:[remainingCards lastObject]];
         [remainingCards removeLastObject];
     };
 
-    void (^dealStockCards)(NSMutableArray *, NSMutableArray *) = ^(NSMutableArray *remainingStockStacks, NSMutableArray *remainingCards) {
-        for (NSMutableArray *stack in remainingStockStacks) {
-            dealCard(stack, remainingCards);
+    void (^dealStockCards)(NSMutableArray *, NSMutableArray *) = ^(NSMutableArray *remainingStockPiles, NSMutableArray *remainingCards) {
+        for (STKStockTableauPile *pile in remainingStockPiles) {
+            dealCard(pile, remainingCards);
         }
     };
 
     void (^dealRound)(NSMutableArray *, NSMutableArray *, NSMutableArray *) =
-            ^(NSMutableArray *remainingPlayStacks, NSMutableArray *remainingStockStacks, NSMutableArray *remainingCards) {
-                dealCard([remainingPlayStacks firstObject], remainingCards);
-                [remainingPlayStacks removeObjectAtIndex:0];
+            ^(NSMutableArray *remainingPlayPiles, NSMutableArray *remainingStockPiles, NSMutableArray *remainingCards) {
+                dealCard([remainingPlayPiles firstObject], remainingCards);
+                [remainingPlayPiles removeObjectAtIndex:0];
 
-                if ([remainingStockStacks count] > 0) {
-                    dealStockCards(remainingStockStacks, remainingCards);
-                    [remainingStockStacks removeObjectAtIndex:0];
+                if ([remainingStockPiles count] > 0) {
+                    dealStockCards(remainingStockPiles, remainingCards);
+                    [remainingStockPiles removeObjectAtIndex:0];
                 }
             };
 
-    while ([remainingPlayStacks count] > 0) {
-        dealRound(remainingPlayStacks, remainingStockStacks, deck);
+    while ([playableTableaus count] > 0) {
+        dealRound(playableTableaus, stockTableauPiles, deck);
     }
 
-    [[[self board] stock] addObjectsFromArray:deck];
+    [[[[self board] stock] cards] addObjectsFromArray:deck];
 }
 
 - (NSArray *)foundations
@@ -201,23 +148,24 @@
     return [foundations copy];
 }
 
-- (NSArray *)tableaus
+- (NSArray *)playableTableaus
 {
     NSMutableArray *tableaus = [NSMutableArray array];
-    for (NSMutableArray *tableaus in [[self board] tableaus]) {
-        [tableaus addObject:[tableaus copy]];
+    for (STKPlayableTableauPile *tableau in [[self board] playableTableaus]) {
+        [tableaus addObject:[[tableau cards] copy]];
     }
     return [tableaus copy];
 }
 
-- (STKMove *)grabPileFromCard:(STKCard *)card
+- (STKMove *)grabTopCardsFromCard:(STKCard *)card
 {
     if ([self canGrab:card] == false) {
         return nil;
     }
 
-    NSArray *cards = [[self board] grabPileFromCard:card];
-    STKMove *move = [STKMove moveWithCards:cards sourcePileID:[[self board] pileIDForCard:card]];
+    STKPile *sourcePile = [[self board] pileContainingCard:card];
+    NSArray *cards = [sourcePile grabTopCardsFromCard:card];
+    STKMove *move = [STKMove moveWithCards:cards sourcePile:sourcePile];
 
     return move;
 }
@@ -245,14 +193,14 @@
 {
     NSArray *foundations = [self foundations];
     NSMutableArray *remainingSuits = [[STKCard allSuits] mutableCopy];
-    for (NSArray *foundation in foundations) {
-        STKCardSuit suit = [[foundation firstObject] suit];
+    for (STKFoundationPile *foundation in foundations) {
+        STKCardSuit suit = (STKCardSuit) [[foundation topCard] suit];
         NSMutableArray *remainingRanks = [[STKCard orderedRanks] mutableCopy];
-        for (STKCard *card in foundation) {
-            if (!([card rank] == [[remainingRanks firstObject] unsignedIntegerValue] || [card suit] == suit)) {
+        for (STKCard *card in [foundation cards]) {
+            if (!([card rank] == [[remainingRanks firstObject] intValue] || ![card suit] == suit)) {
                 return NO;
             }
-            [remainingRanks removeObject:0];
+            [remainingRanks removeObjectAtIndex:0];
         }
         [remainingSuits removeObject:@(suit)];
 
