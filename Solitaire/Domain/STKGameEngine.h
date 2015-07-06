@@ -24,7 +24,7 @@
 
 - (void)dealCards:(NSArray *)deck;
 
-- (BOOL)areWinningConditionsSatisfied;
+- (BOOL)isBoardSolved;
 
 - (BOOL)canDrawStockToWaste;
 - (BOOL)canResetWasteToStock;

@@ -12,8 +12,7 @@
 
 @implementation SolitaireTests
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
@@ -23,8 +22,7 @@
     [[self engine] dealCards:[STKCard deck]];
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [self setBoard:nil];
     [self setEngine:nil];
@@ -32,18 +30,33 @@
     [super tearDown];
 }
 
-- (void)testStockHas24CardsAfterSetup
-{
+- (void)moveStockCardsToWaste {
+    while ([[[self engine] stock] count] > 0) {
+        [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
+    }
+}
+
+- (void)clearStock {
+    [[[[self board] stock] cards] removeAllObjects];
+}
+
+- (void)clearWaste {
+    [[[[self board] waste] cards] removeAllObjects];
+}
+
+- (void)clearPlayableTableauAtIndex:(NSUInteger)index {
+    [[[[self board] tableauAtIndex:index] cards] removeAllObjects];
+}
+
+- (void)testStockHas24CardsAfterSetup {
     XCTAssertEqual(24, [[[self engine] stock] count]);
 }
 
-- (void)testWasteHas0CardsAfterSetup
-{
+- (void)testWasteHas0CardsAfterSetup {
     XCTAssertEqual(0, [[[self engine] waste] count]);
 }
 
-- (void)testFoundationsHave0CardsAfterSetup
-{
+- (void)testFoundationsHave0CardsAfterSetup {
     for (STKFoundationPile *foundation in [[self board] foundations]) {
         XCTAssertFalse([foundation hasCards]);
     }
@@ -57,65 +70,51 @@
     }
 }
 
-- (void)testTableausHave1CardAfterSetup
-{
+- (void)testTableausHave1CardAfterSetup {
     for (STKPlayableTableauPile *tableau in [[self board] playableTableaus]) {
         XCTAssertEqual(1, [[tableau cards] count]);
     }
 }
 
-- (void)testCanDrawStockToWasteWhenStockIsNonEmpty
-{
+- (void)testCanDrawStockToWasteWhenStockIsNonEmpty {
     XCTAssertTrue([[self engine] canDrawStockToWaste]);
 }
 
-- (void)testCanNotDrawStockToWasteWhenStockIsEmpty
-{
-    while ([[[self engine] stock] count] > 0) {
-        [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
-    }
+- (void)testCanNotDrawStockToWasteWhenStockIsEmpty {
+    [self moveStockCardsToWaste];
 
     XCTAssertFalse([[self engine] canDrawStockToWaste]);
 }
 
-- (void)testCanRedealWasteToStockWhenStockIsEmptyAndWasteIsNonEmpty
-{
-    while ([[[self engine] stock] count] > 0) {
-        [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
-    }
+- (void)testCanRedealWasteToStockWhenStockIsEmptyAndWasteIsNonEmpty {
+    [self moveStockCardsToWaste];
 
     XCTAssertTrue([[self engine] canResetWasteToStock]);
 }
 
-- (void)testCanNotRedealWasteToStockWhenStockIsNonEmpty
-{
+- (void)testCanNotRedealWasteToStockWhenStockIsNonEmpty {
     // stock is already none empty, make sure to populate waste to make the next test more valuable
     [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
 
     XCTAssertFalse([[self engine] canResetWasteToStock]);
 }
 
-- (void)testCanNotRedealWasteToStockWhenWasteIsEmpty
-{
-    [[self board] clearWaste];
-    [[self board] clearStock];
+- (void)testCanNotRedealWasteToStockWhenWasteIsEmpty {
+    [self clearStock];
+    [self clearWaste];
 
     XCTAssertFalse([[self engine] canResetWasteToStock]);
 }
 
-- (void)testCanGrabTopWasteCard
-{
+- (void)testCanGrabTopWasteCard {
     [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
 
     STKCard *topWasteCard = [[[self engine] waste] lastObject];
     XCTAssertTrue([[self engine] canGrab:topWasteCard]);
 }
 
-- (void)testCanNotGrabCoveredWasteCard
-{
-    while ([[[self engine] stock] count]) {
-        [STKBoard moveTopCard:[[self board] stock] toPile:[[self board] waste]];
-    }
+- (void)testCanNotGrabCoveredWasteCard {
+    [self moveStockCardsToWaste];
 
     for (STKCard *card in [[self engine] waste]) {
         if (card != [[[self engine] waste] lastObject]) {
@@ -124,8 +123,7 @@
     }
 }
 
-- (void)testCanGrabTopFoundationCards
-{
+- (void)testCanGrabTopFoundationCards {
     for (STKPile *foundation in [[self board] foundations]) {
         [STKBoard moveTopCard:[[self board] stock] toPile:foundation];
 
@@ -133,8 +131,7 @@
     }
 }
 
-- (void)testCanNotGrabCoveredFoundationCards
-{
+- (void)testCanNotGrabCoveredFoundationCards {
     while ([[[self engine] stock] count] > 0) {
         for (STKFoundationPile *foundation in [[self board] foundations]) {
             [STKBoard moveTopCard:[[self board] stock] toPile:foundation];
@@ -148,8 +145,7 @@
     }
 }
 
-- (void)testCanGrabTopTableauCards
-{
+- (void)testCanGrabTopTableauCards {
     while ([[[self engine] stock] count] > 0) {
         for (STKPlayableTableauPile *tableau in [[self board] playableTableaus]) {
             [STKBoard moveTopCard:[[self board] stock] toPile:tableau];
@@ -189,12 +185,10 @@
     XCTAssertEqual([[move cards] firstObject], topWasteCard);
     XCTAssertEqual([[move cards] count], 1);
     XCTAssertFalse([[[self engine] waste] containsObject:topWasteCard]);
-
     XCTAssertEqual(expectedPile, [move sourcePile]);
 }
 
-- (void)testGrabbingTopFoundationCard
-{
+- (void)testGrabbingTopFoundationCard {
     for (STKFoundationPile *foundation in [[self board] foundations]) {
         [STKBoard moveTopCard:[[self board] stock] toPile:foundation];
     }
@@ -209,7 +203,6 @@
         XCTAssertEqual([[move cards] firstObject], topFoundationCard);
         XCTAssertEqual([[move cards] count], 1);
         XCTAssertFalse([[[self engine] foundationAtIndex:i] containsObject:topFoundationCard]);
-
         XCTAssertEqual(expectedPile, [move sourcePile]);
     }
 }
@@ -229,7 +222,6 @@
         XCTAssertEqual([[move cards] firstObject], topTableauCard);
         XCTAssertEqual([[move cards] count], 1);
         XCTAssertFalse([[[self engine] tableauAtIndex:i] containsObject:topTableauCard]);
-
         XCTAssertEqual(expectedSourcePile, [move sourcePile]);
     }
 }
@@ -264,7 +256,6 @@
 
     NSUInteger wasteIndex = [[[self engine] waste] count] - expectedLength;
     for (STKCard *card in expectedWasteEnumerator) {
-
         XCTAssertEqual(card, [[self engine] waste][wasteIndex++]);
         XCTAssertFalse([[[self engine] stock] containsObject:card]);
     }
@@ -293,11 +284,11 @@
 }
 
 - (void)testRedealWasteToStock {
+    //redeal should put waste back to stock, in the back in the original stock order
+    NSArray *expectedStock = [[self engine] waste];
     while ([[[self engine] stock] count]) {
         [[self engine] drawStockToWaste];
     }
-
-    NSEnumerator *expectedStock = [[[self engine] waste] reverseObjectEnumerator];
 
     [[self engine] resetWasteToStock];
 
@@ -308,11 +299,10 @@
     }
 }
 
-- (void)testCanFlipStockTableauWhenTableauIsEmptyAndStockTableauIsNotEmpty
-{
+- (void)testCanFlipStockTableauWhenTableauIsEmptyAndStockTableauIsNotEmpty {
     // first tableau stock is always empty
     for (NSUInteger i = 1; i < [[[self engine] playableTableaus] count]; ++i) {
-        [[self board] clearPlayableTableauAtIndex:i];
+        [self clearPlayableTableauAtIndex:i];
         XCTAssertTrue([[self engine] canFlipStockTableauAtIndex:i]);
     }
 }
@@ -326,12 +316,10 @@
     XCTAssertFalse([[self engine] canFlipStockTableauAtIndex:1]);
 }
 
-- (void)testPatienceEngineCanValidateWinningConditions
-{
+- (void)testPatienceEngineCanValidateSolvedBoard {
+    //set up winning board starting with a clear board
     [self setBoard:[[STKBoard alloc] init]];
     [self setEngine:[[STKGameEngine alloc] initWithBoard:[self board]]];
-
-    //set up winning board
 
     for (NSUInteger i = 0; i < [[[self board] foundations] count]; ++i) {
         STKFoundationPile *foundation = [[self board] foundationAtIndex:i];
@@ -339,15 +327,7 @@
         [[foundation cards] addObjectsFromArray:[STKCard completeAscendingSuit:suit]];
     }
 
-    for (NSUInteger i = 0; i < [STKBoard numberOfTableaus]; ++i) {
-        [[[[self board] tableauAtIndex:i] cards] removeAllObjects];
-        [[[[self board] stockTableauAtIndex:i] cards] removeAllObjects];
-    }
-
-    [[self board] clearStock];
-    [[self board] clearWaste];
-
-    XCTAssertTrue([[self engine] areWinningConditionsSatisfied]);
+    XCTAssertTrue([[self engine] isBoardSolved]);
 }
 
 - (void)testCanMoveValidCardsToNonEmptyTableau {
@@ -355,13 +335,10 @@
     [[tableau cards] removeAllObjects];
     [[tableau cards] addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
 
-    NSArray *validCards = @[
-            [STKCard cardWithRank:STKCardRankFour suit:STKCardSuitHearts],
-            [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitClubs]
-    ];
+    NSArray *validCards = @[[STKCard cardWithRank:STKCardRankFour suit:STKCardSuitHearts],
+            [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitClubs]];
 
     STKMove *validMove = [[STKMove alloc] initWithCards:validCards sourcePile:nil];
-
     XCTAssertTrue([[self engine] canCompleteMove:validMove withTargetPile:tableau]);
 }
 
@@ -370,10 +347,8 @@
     [[tableau cards] removeAllObjects];
     [[tableau cards] addObject:[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitSpades]];
 
-    NSArray *invalidCards = @[
-            [STKCard cardWithRank:STKCardRankFive suit:STKCardSuitHearts],
-            [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitClubs]
-    ];
+    NSArray *invalidCards = @[[STKCard cardWithRank:STKCardRankFive suit:STKCardSuitHearts],
+            [STKCard cardWithRank:STKCardRankThree suit:STKCardSuitClubs]];
 
     STKMove *invalidMove = [[STKMove alloc] initWithCards:invalidCards sourcePile:nil];
     XCTAssertFalse([[self engine] canCompleteMove:invalidMove withTargetPile:tableau]);

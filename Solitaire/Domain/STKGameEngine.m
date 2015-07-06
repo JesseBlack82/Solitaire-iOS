@@ -189,7 +189,7 @@
     }
 }
 
-- (BOOL)areWinningConditionsSatisfied
+- (BOOL)isBoardSolved
 {
     NSArray *foundations = [self foundations];
     NSMutableArray *remainingSuits = [[STKCard allSuits] mutableCopy];

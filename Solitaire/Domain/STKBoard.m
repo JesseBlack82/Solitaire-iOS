@@ -20,6 +20,16 @@
     return self;
 }
 
+- (instancetype)copy
+{
+    STKPile *copy = [(STKPile *) ([[self class] alloc]) initWithBoard:[self board]];
+
+    [[copy cards] addObjectsFromArray:[self cards]];
+    [copy setBoard:[self board]];
+
+    return copy;
+}
+
 - (BOOL)isEqual:(id)object
 {
     if (![[object class] isKindOfClass:[STKPile class]]) {
@@ -40,16 +50,6 @@
 - (BOOL)hasCards
 {
     return [[self cards] count] > 0;
-}
-
-- (instancetype)copy
-{
-    STKPile *copy = [(STKPile *) ([[self class] alloc]) initWithBoard:[self board]];
-
-    [[copy cards] addObjectsFromArray:[self cards]];
-    [copy setBoard:[self board]];
-
-    return copy;
 }
 
 - (STKCard *)topCard
@@ -352,21 +352,6 @@
     [piles addObject:[self waste]];
 
     return piles;
-}
-
-- (void)clearWaste
-{
-    [[[self waste] cards] removeAllObjects];
-}
-
-- (void)clearStock
-{
-    [[[self stock] cards] removeAllObjects];
-}
-
-- (void)clearPlayableTableauAtIndex:(NSUInteger)index
-{
-    [[[self playableTableaus][index] cards] removeAllObjects];
 }
 
 - (NSArray *)stockTableaus

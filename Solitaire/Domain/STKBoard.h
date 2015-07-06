@@ -6,8 +6,8 @@
 @class STKTableauSlot;
 
 @interface STKPile : NSObject
-- (instancetype)copy;
 - (instancetype)initWithBoard:(STKBoard *)board;
+- (instancetype)copy;
 
 @property (nonatomic, strong) NSMutableArray *cards;
 
@@ -59,29 +59,20 @@
 @property (nonatomic, strong) NSArray *tableauSlots;
 
 + (NSUInteger)numberOfTableaus;
-
 + (NSUInteger)numberOfFoundations;
 
 + (void)moveTopCard:(STKPile *)sourcePile toPile:(STKPile *)toPile;
 
+- (NSMutableArray *)allPiles;
 - (STKFoundationPile *)foundationAtIndex:(NSUInteger)foundationIndex;
 - (STKPlayableTableauPile *)tableauAtIndex:(NSUInteger)tableauIndex;
 - (STKStockTableauPile *)stockTableauAtIndex:(NSUInteger)tableauIndex;
+- (NSArray *)stockTableaus;
+- (NSArray *)playableTableaus;
 
 - (BOOL)isCardTopWasteCard:(STKCard *)card;
 - (BOOL)isPlayableTableauCard:(STKCard *)card;
 - (BOOL)isTopFoundationCard:(STKCard *)card;
 
 - (STKPile *)pileContainingCard:(STKCard *)card;
-
-- (NSMutableArray *)allPiles;
-
-- (void)clearWaste;
-- (void)clearStock;
-
-- (void)clearPlayableTableauAtIndex:(NSUInteger)index;
-
-- (NSArray *)stockTableaus;
-
-- (NSArray *)playableTableaus;
 @end
